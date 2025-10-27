@@ -9,18 +9,21 @@
     "lint": "eslint 'src/**/*.{ts,js}' --fix",
     "format": "prettier --write 'src/**/*.{ts,js,json,md}'",
     "type-check": "tsc --noEmit",
-    "verify": "npm run lint && npm run type-check"
+    "verify": "npm run lint && npm run type-check",
+    "migrate:dev": "dotenv -e .env.development -- npx prisma migrate dev",
+    "migrate:test": "dotenv -e .env.test -- npx prisma migrate dev",
+    "migrate:prod": "dotenv -e .env.production -- npx prisma migrate deploy",
+    "generate": "npx prisma generate"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "description": "",
   "dependencies": {
-    "@prisma/client": "^6.16.2",
+    "@prisma/client": "^6.18.0",
     "dotenv": "^17.2.2",
     "express": "^5.1.0",
     "pg": "^8.16.3",
-    "prisma": "^6.16.2",
     "zod": "^4.1.9"
   },
   "devDependencies": {
@@ -30,9 +33,11 @@
     "@types/express": "^5.0.3",
     "@types/node": "^24.4.0",
     "cross-env": "^10.0.0",
+    "dotenv-cli": "^10.0.0",
     "eslint": "^9.35.0",
     "eslint-plugin-perfectionist": "^4.15.0",
     "prettier": "^3.6.2",
+    "prisma": "^6.18.0",
     "ts-node-dev": "^2.0.0",
     "typescript": "^5.9.2",
     "typescript-eslint": "^8.43.0"
