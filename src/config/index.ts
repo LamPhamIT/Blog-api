@@ -1,19 +1,13 @@
 import dotenv from "dotenv";
-import z from "zod";
+import path from "path";
 
-const NODE_ENV = process.env.NODE_ENV ?? "test";
+export const NODE_ENV = (process.env.NODE_ENV ?? "development") as | "development" | "production" | "test";
+
 const isProduction = NODE_ENV === "production";
 
 if(!isProduction) {
-    const envFile = `.env.${NODE_ENV}`;
+    const envFile = path.resolve(process.cwd(), `.env.${NODE_ENV}`);
     dotenv.config({ path: envFile });
 }
 
-
-const envSchema = z.object({
-    NODE_ENV: z.enum(["development", "production", "test"]).default("development"),
-    PORT: z.coerce.number().default(3000),
-})
-
-export type EnvType = z.infer<typeof envSchema>;
-export const env: EnvType = envSchema.parse(process.env);
+export const rawEnv = process.env;
