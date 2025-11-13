@@ -7,6 +7,16 @@ import perfectionist from "eslint-plugin-perfectionist";
 export default tseslint.config(
   {
     ignores: ["**/*.js"],
+    rules: {
+      "@typescript-eslint/no-unused-vars": [
+        "warn",
+        {
+          argsIgnorePattern: "^_",
+          varsIgnorePattern: "^_",
+          caughtErrorsIgnorePattern: "^_",
+        },
+      ],
+    },
   },
   eslint.configs.recommended,
   tseslint.configs.strictTypeChecked,
@@ -19,5 +29,4 @@ export default tseslint.config(
       },
     },
   },
-  perfectionist.configs["recommended-natural"],
 );
