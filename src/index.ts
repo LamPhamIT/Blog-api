@@ -1,11 +1,22 @@
 import express from 'express';
+import YAML from 'yamljs';
+import swaggerUi, { JsonObject } from 'swagger-ui-express';
 
 import { systemConfig } from './config/system.config';
 import { connect } from './prisma/client';
 import { errorHandler } from './middleware/error.middleware';
+import router from './routes';
 
 const app = express();
 const port = systemConfig.PORT;
+
+const swaggerDocument = YAML.load("./docs/bundled.yaml") as JsonObject;
+
+app.use(express.json());
+
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument))
+
+app.use(router);
 
 app.use(errorHandler);
 

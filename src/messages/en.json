@@ -3,5 +3,7 @@
   "user.not.found": "User not found",
   "validation.failed": "Validation failed for {0} fields",
   "forbidden.access": "You do not have permission to perform this action",
-  "internal.server.error": "An unexpected server error occurred"
+  "internal.server.error": "An unexpected server error occurred",
+  "user.email.exists": "The provided email is already in use.",
+  "role.missing": "A required role is missing for this operation."
 }

@@ -17,6 +17,14 @@ export const ErrorDetails: Record<string, ErrorDetail> = {
     code: 'FORBIDDEN_ACCESS',
     detail: 'You do not have permission to perform this action.',
   },
+  USER_EMAIL_EXISTS: {
+    code: 'USER_EMAIL_EXISTS',
+    detail: 'The provided email is already in use.',
+  }, 
+  ROLE_MISSING: {
+    code: 'ROLE_MISSING',
+    detail: 'A required role is missing for this operation.',
+  },
 };
 
 export type ErrorDetailKey = keyof typeof ErrorDetails;

@@ -1,0 +1,66 @@
+paths:
+  /auth/register:
+    post:
+      summary: Register a new user
+      tags:
+        - Auth
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RegisterRequest"
+      responses:
+        "201":
+          description: User created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserResponse"
+        "400":
+          description: Validation failed
+        "409":
+          description: Email already exists
+
+components:
+  schemas:
+    RegisterRequest:
+      type: object
+      required:
+        - email
+        - password
+      properties:
+        email:
+          type: string
+          example: test@example.com
+        password:
+          type: string
+          example: 123456
+        fullName:
+          type: string
+          example: Test User
+
+    UserResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        messageKey:
+          type: string
+          example: user.created.success
+        message:
+          type: string
+          example: User created successfully
+        data:
+          type: object
+          properties:
+            id:
+              type: string
+              example: cuid123
+            email:
+              type: string
+              example: test@example.com
+            fullName:
+              type: string
+              example: Test User

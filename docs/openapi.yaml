@@ -1,0 +1,15 @@
+openapi: 3.0.0
+info:
+  title: Blog API
+  version: "1.0.0"
+servers:
+  - url: http://localhost:3001/api/v1
+    description: blog server
+
+paths:
+  # Import Auth module
+  $ref: "./modules/auth.yaml#/paths"
+
+components:
+  schemas:
+    # Nếu bạn muốn share schemas global, có thể define ở đây
