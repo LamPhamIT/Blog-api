@@ -10,11 +10,11 @@ import router from './routes';
 const app = express();
 const port = systemConfig.PORT;
 
-const swaggerDocument = YAML.load("./docs/bundled.yaml") as JsonObject;
+const swaggerDocument = YAML.load('./docs/bundled.yaml') as JsonObject;
 
 app.use(express.json());
 
-app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument))
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 app.use(router);
 

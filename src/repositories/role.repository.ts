@@ -1,7 +1,7 @@
-import { prisma } from "../prisma/client";
+import { prisma } from '../prisma/client';
 
 export class RoleRepository {
-    findByName(name: string) {
-        return prisma.role.findUnique({ where: { name } });
-    }
+  findByName(name: string) {
+    return prisma.role.findUnique({ where: { name } });
+  }
 }

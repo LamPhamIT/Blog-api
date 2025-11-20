@@ -1,9 +1,14 @@
-import { PrismaClient } from '../../generated/prisma';
+import { PrismaClient } from '@prisma/client';
 import { databaseConfig } from '../config/database.config';
 
-const globalForPrisma = global as unknown as {
+declare global {
+  var prisma: PrismaClient | undefined;
+}
+
+const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined;
 };
+
 
 export const prisma =
   globalForPrisma.prisma ??
