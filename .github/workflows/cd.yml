@@ -1,6 +1,7 @@
 name: Deploy Blog Project
 
 on:
+  workflow_dispatch:
   push:
     branches: ["main"]
 
