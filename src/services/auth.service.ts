@@ -7,6 +7,8 @@ import { RoleKeys, UserKeys } from '../constants/message-key';
 import { ErrorDetails } from '../constants/error-detail.constant';
 import { BCRYPT } from '../constants/hash.constant';
 import bcrypt from 'bcrypt';
+import { prisma } from '../prisma/client';
+
 const userRepository = new UserRepository();
 const roleRepository = new RoleRepository();
 
@@ -21,10 +23,7 @@ class AuthService {
       );
     }
     const hashed = await bcrypt.hash(data.password, BCRYPT.SALT_ROUNDS);
-    const user = await userRepository.create({
-      ...data,
-      password: hashed,
-    });
+   
 
     const defaultRole = await roleRepository.findByName('USER');
     if (!defaultRole) {
@@ -35,7 +34,14 @@ class AuthService {
       );
     }
 
-    await userRepository.assignRole(user.id, defaultRole.id);
+    
+    const user = await prisma.$transaction(async (tx) => {
+      const newUser = await userRepository.create({ ...data, password: hashed }, tx);
+
+      await userRepository.assignRole(newUser.id, defaultRole.id, tx);
+
+      return newUser;
+    });
 
     return {
       id: user.id,
