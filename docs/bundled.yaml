@@ -3,7 +3,7 @@ info:
   title: Blog API
   version: 1.0.0
 servers:
-  - url: 'http://localhost:3001/api/v1'
+  - url: 'http://blog-api.lamphamit.site:3000/api/v1'
     description: blog server
 paths:
   /auth/register:
