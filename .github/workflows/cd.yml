@@ -18,16 +18,23 @@ jobs:
         with:
           ssh-private-key: ${{ secrets.SSH_KEY }}
 
+      - name: Generate .env for deploy
+        run: |
+          echo "# Auto-generated .env" > .env.deploy
+          
+          # Lặp qua tất cả secret PROD_ được GitHub inject vào runner
+          for secret_name in $(compgen -v | grep '^PROD_'); do
+            echo "${secret_name#PROD_}=${!secret_name}" >> .env.deploy
+          done
+
+      - name: Copy .env to VPS
+        run: |
+          scp -o StrictHostKeyChecking=no .env.deploy ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/var/www/blog/.env
+
       - name: Deploy to VPS
         run: |
           ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "
             cd /var/www/blog
-
-            # Export all PROD_ secrets
-            for name in $(compgen -v | grep '^PROD_'); do
-              export \${name#PROD_}=\${!name}
-            done
-
             git pull origin main
             npm install
             npm run build
