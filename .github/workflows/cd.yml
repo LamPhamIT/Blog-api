@@ -21,9 +21,7 @@ jobs:
       - name: Generate .env for deploy
         env:
           SECRETS_CONTEXT: ${{ toJSON(secrets) }}
-        run: |
-          echo "# Auto-generated .env" > .env.deploy
-          
+        run: |          
           echo "$SECRETS_CONTEXT" | jq -r 'to_entries | .[] | select(.key | startswith("PROD_")) | "\(.key | sub("^PROD_"; ""))=\(.value)"' >> .env.deploy
 
       - name: Copy .env to VPS
@@ -34,11 +32,12 @@ jobs:
         run: |
           ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "
             cd /var/www/blog
+            git fetch origin
             git pull origin main
             npm install
             npm run build
             
-            npx swagger-cli bundle openapi.yaml -o bundled.yaml --type yaml
+            npx swagger-cli bundle docs/openapi.yaml -o docs/bundled.yaml --type yaml
             
             npm run migrate:prod
             pm2 restart ecosystem.config.js --env production --update-env
