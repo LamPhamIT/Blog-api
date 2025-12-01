@@ -6,11 +6,18 @@ export class UserRepository {
     return prisma.user.findUnique({ where: { email } });
   }
 
-  create(data: { email: string; password: string; fullName?: string }, tx: Prisma.TransactionClient = prisma  ) {
+  create(
+    data: { email: string; password: string; fullName?: string },
+    tx: Prisma.TransactionClient = prisma,
+  ) {
     return tx.user.create({ data });
   }
 
-  assignRole(userId: string, roleId: number, tx: Prisma.TransactionClient = prisma) {
+  assignRole(
+    userId: string,
+    roleId: number,
+    tx: Prisma.TransactionClient = prisma,
+  ) {
     return tx.userRole.create({
       data: { userId, roleId },
     });

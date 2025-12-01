@@ -23,7 +23,6 @@ class AuthService {
       );
     }
     const hashed = await bcrypt.hash(data.password, BCRYPT.SALT_ROUNDS);
-   
 
     const defaultRole = await roleRepository.findByName('USER');
     if (!defaultRole) {
@@ -34,9 +33,11 @@ class AuthService {
       );
     }
 
-    
     const user = await prisma.$transaction(async (tx) => {
-      const newUser = await userRepository.create({ ...data, password: hashed }, tx);
+      const newUser = await userRepository.create(
+        { ...data, password: hashed },
+        tx,
+      );
 
       await userRepository.assignRole(newUser.id, defaultRole.id, tx);
 
