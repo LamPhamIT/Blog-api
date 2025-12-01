@@ -2,14 +2,21 @@ openapi: 3.0.0
 info:
   title: Blog API
   version: "1.0.0"
+  description: API Documentation for Blog Platform
 servers:
+  - url: http://localhost:3000/api/v1
+    description: Local Development
   - url: http://blog-api.lamphamit.site:3000/api/v1
-    description: blog server
+    description: Production Server
 
 paths:
   # Import Auth module
   $ref: "./modules/auth.yaml#/paths"
+  
 
 components:
-  schemas:
-    # Nếu bạn muốn share schemas global, có thể define ở đây
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

@@ -25,6 +25,10 @@ export const ErrorDetails: Record<string, ErrorDetail> = {
     code: 'ROLE_MISSING',
     detail: 'A required role is missing for this operation.',
   },
+  INVALID_CREDENTIAL: {
+    code: 'INVALID_CREDENTIAL',
+    detail: 'The provided credentials are invalid.',
+  },
 };
 
 export type ErrorDetailKey = keyof typeof ErrorDetails;

@@ -1,6 +1,26 @@
 import { Prisma } from '@prisma/client';
 import { prisma } from '../prisma/client';
 
+const userWithRolesAndPermissions = Prisma.validator<Prisma.UserDefaultArgs>()({
+  include: {
+    roles: {
+      include: {
+        role: {
+          include: {
+            permissions: {
+              include: { permission: true },
+            },
+          },
+        },
+      },
+    },
+  },
+});
+
+export type UserWithPermissions = Prisma.UserGetPayload<
+  typeof userWithRolesAndPermissions
+>;
+
 export class UserRepository {
   findByEmail(email: string) {
     return prisma.user.findUnique({ where: { email } });
@@ -20,6 +40,15 @@ export class UserRepository {
   ) {
     return tx.userRole.create({
       data: { userId, roleId },
+    });
+  }
+
+  findByEmailWithPermissions(
+    email: string,
+  ): Promise<UserWithPermissions | null> {
+    return prisma.user.findUnique({
+      where: { email },
+      ...userWithRolesAndPermissions,
     });
   }
 }

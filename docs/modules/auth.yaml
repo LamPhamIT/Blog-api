@@ -19,9 +19,38 @@ paths:
                 $ref: "#/components/schemas/UserResponse"
         "400":
           description: Validation failed
+          content:
+            application/json:
+              schema:
+                $ref: "../common/error.yaml#/ValidationErrorResponse"
         "409":
           description: Email already exists
-
+  /auth/login:
+    post:
+      summary: Login to the system
+      tags:
+        - Auth
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginRequest"
+      responses:
+        "200":
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LoginResponse"
+        "401":
+          description: Bad credentials
+        "400":
+          description: Validation failed
+          content:
+            application/json:
+              schema:
+                $ref: "../common/error.yaml#/ValidationErrorResponse"
 components:
   schemas:
     RegisterRequest:
@@ -39,7 +68,20 @@ components:
         fullName:
           type: string
           example: Test User
-
+    LoginRequest:
+      type: object
+      required:
+        - email
+        - password
+      properties:
+        email:
+          type: string
+          format: email
+          example: test@example.com
+        password:
+          type: string
+          format: password
+          example: "123456"
     UserResponse:
       type: object
       properties:
@@ -64,3 +106,47 @@ components:
             fullName:
               type: string
               example: Test User
+    LoginResponse:
+        type: object
+        properties:
+          success:
+            type: boolean
+            example: true
+          messageKey:
+            type: string
+            example: auth.login.success
+          message:
+            type: string
+            example: Login successful
+          data:
+            type: object
+            properties:
+              accessToken:
+                type: string
+                description: JWT Access Token (RSA Signed)
+                example: "eyJhbGciOiJSUzI1NiIs..."
+              refreshToken:
+                type: string
+                description: JWT Refresh Token (HMAC Signed)
+                example: "eyJhbGciOiJIUzI1NiIs..."
+              user:
+                $ref: "#/components/schemas/UserDto"
+
+    # --- DATA OBJECTS ---
+    UserDto:
+      type: object
+      properties:
+        id:
+          type: string
+          example: clq12345...
+        email:
+          type: string
+          example: test@example.com
+        fullName:
+          type: string
+          example: Test User
+        roles:
+          type: array
+          items:
+            type: string
+          example: ["USER"]

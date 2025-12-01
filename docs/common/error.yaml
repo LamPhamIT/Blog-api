@@ -1,0 +1,55 @@
+ValidationErrorDetail:
+  type: object
+  properties:
+    code:
+      type: string
+      example: "validation.failed"
+    message:
+      type: string
+      example: "Invalid email format"
+    field:
+      type: string
+      example: "email"
+
+ValidationErrorResponse:
+  type: object
+  properties:
+    success:
+      type: boolean
+      example: false
+    statusCode:
+      type: integer
+      example: 400
+    messageKey:
+      type: string
+      example: "validation.failed"
+    message:
+      type: string
+      example: "Validation failed"
+    details:
+      type: array
+      items:
+        # Trỏ đến definition ngay bên trên trong cùng file này
+        $ref: "#/ValidationErrorDetail"
+
+ErrorResponse:
+  type: object
+  properties:
+    success:
+      type: boolean
+      example: false
+    statusCode:
+      type: integer
+      example: 409
+    messageKey:
+      type: string
+      example: "user.email.exists"
+    message:
+      type: string
+      example: "The provided email is already in use."
+    # details là optional, lỗi chung thường không có field cụ thể
+    details:
+      type: array
+      items: 
+        type: object
+      example: []

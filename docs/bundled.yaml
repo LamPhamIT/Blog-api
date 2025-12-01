@@ -2,9 +2,12 @@ openapi: 3.0.0
 info:
   title: Blog API
   version: 1.0.0
+  description: API Documentation for Blog Platform
 servers:
+  - url: 'http://localhost:3000/api/v1'
+    description: Local Development
   - url: 'http://blog-api.lamphamit.site:3000/api/v1'
-    description: blog server
+    description: Production Server
 paths:
   /auth/register:
     post:
@@ -61,7 +64,119 @@ paths:
                         example: Test User
         '400':
           description: Validation failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/paths/~1auth~1login/post/responses/400/content/application~1json/schema'
         '409':
           description: Email already exists
+  /auth/login:
+    post:
+      summary: Login to the system
+      tags:
+        - Auth
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - password
+              properties:
+                email:
+                  type: string
+                  format: email
+                  example: test@example.com
+                password:
+                  type: string
+                  format: password
+                  example: '123456'
+      responses:
+        '200':
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  messageKey:
+                    type: string
+                    example: auth.login.success
+                  message:
+                    type: string
+                    example: Login successful
+                  data:
+                    type: object
+                    properties:
+                      accessToken:
+                        type: string
+                        description: JWT Access Token (RSA Signed)
+                        example: eyJhbGciOiJSUzI1NiIs...
+                      refreshToken:
+                        type: string
+                        description: JWT Refresh Token (HMAC Signed)
+                        example: eyJhbGciOiJIUzI1NiIs...
+                      user:
+                        type: object
+                        properties:
+                          id:
+                            type: string
+                            example: clq12345...
+                          email:
+                            type: string
+                            example: test@example.com
+                          fullName:
+                            type: string
+                            example: Test User
+                          roles:
+                            type: array
+                            items:
+                              type: string
+                            example:
+                              - USER
+        '400':
+          description: Validation failed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  statusCode:
+                    type: integer
+                    example: 400
+                  messageKey:
+                    type: string
+                    example: validation.failed
+                  message:
+                    type: string
+                    example: Validation failed
+                  details:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: string
+                          example: validation.failed
+                        message:
+                          type: string
+                          example: Invalid email format
+                        field:
+                          type: string
+                          example: email
+        '401':
+          description: Bad credentials
 components:
-  schemas: null
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

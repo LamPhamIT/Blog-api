@@ -5,5 +5,7 @@
   "forbidden.access": "You do not have permission to perform this action",
   "internal.server.error": "An unexpected server error occurred",
   "user.email.exists": "The provided email is already in use.",
-  "role.missing": "A required role is missing for this operation."
+  "role.missing": "A required role is missing for this operation.",
+  "auth.invalid.credential": "The provided credentials are invalid.",
+  "auth.login.success": "Login successful."
 }

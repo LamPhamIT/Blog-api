@@ -1,9 +1,9 @@
 import { Request, Response, NextFunction } from 'express';
-import { RegisterDTO } from '../dtos/auth.dto';
+import { LoginDTO, RegisterDTO } from '../dtos/auth.dto';
 import authService from '../services/auth.service';
 import { StatusCodes } from 'http-status-codes';
 import { successResponse } from '../utils/response.factory';
-import { UserKeys } from '../constants/message-key';
+import { AuthKeys, UserKeys } from '../constants/message-key';
 
 class AuthController {
   register = async (
@@ -16,6 +16,20 @@ class AuthController {
       return res
         .status(StatusCodes.CREATED)
         .json(successResponse(UserKeys.USER_CREATED_SUCCESS, user));
+    } catch (error) {
+      next(error);
+    }
+  };
+  login = async (
+    req: Request<Record<string, unknown>, unknown, LoginDTO>,
+    res: Response,
+    next: NextFunction,
+  ) => {
+    try {
+      const result = await authService.login(req.body);
+      return res
+        .status(StatusCodes.OK)
+        .json(successResponse(AuthKeys.LOGIN_SUCCESS, result));
     } catch (error) {
       next(error);
     }
