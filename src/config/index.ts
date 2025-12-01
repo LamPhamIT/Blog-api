@@ -6,11 +6,7 @@ export const NODE_ENV = (process.env.NODE_ENV ?? 'development') as
   | 'production'
   | 'test';
 
-const isProduction = NODE_ENV === 'production';
-
-if (!isProduction) {
-  const envFile = path.resolve(process.cwd(), `.env.${NODE_ENV}`);
-  dotenv.config({ path: envFile });
-}
-
+const envFile = path.resolve(process.cwd(), `.env.${NODE_ENV}`);
+dotenv.config({ path: envFile });
+dotenv.config({ path: path.resolve(process.cwd(), '.env') });
 export const rawEnv = process.env;

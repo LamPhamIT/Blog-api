@@ -26,7 +26,7 @@ jobs:
 
       - name: Copy .env to VPS
         run: |
-          scp -o StrictHostKeyChecking=no .env.deploy ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/var/www/blog/.env
+          scp -o StrictHostKeyChecking=no .env.deploy ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/var/www/blog/.env.production
 
       - name: Deploy to VPS
         run: |
@@ -40,5 +40,5 @@ jobs:
             npx swagger-cli bundle docs/openapi.yaml -o docs/bundled.yaml --type yaml
             
             npm run migrate:prod
-            pm2 restart ecosystem.config.js --env production --update-env
+            pm2 reload ecosystem.config.js --env production
           "
