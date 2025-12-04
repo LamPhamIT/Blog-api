@@ -15,7 +15,7 @@ class AuthController {
       const user = await authService.register(req.body);
       return res
         .status(StatusCodes.CREATED)
-        .json(successResponse(UserKeys.USER_CREATED_SUCCESS, user));
+        .json(successResponse(UserKeys.USER_CREATED, user));
     } catch (error) {
       next(error);
     }

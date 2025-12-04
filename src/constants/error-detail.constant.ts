@@ -37,6 +37,14 @@ export const ErrorDetails: Record<string, ErrorDetail> = {
     code: 'TOKEN_INVALID',
     detail: 'Authentication token is invalid or expired.',
   },
+  SERIES_NOT_FOUND: {
+    code: 'SERIES_NOT_FOUND',
+    detail: 'The specified series was not found.',
+  },
+  TAGS_LIMIT_EXCEEDED: {
+    code: 'TAGS_LIMIT_EXCEEDED',
+    detail: 'You have exceeded the maximum number of tags allowed per post (Max {0}).',
+  },
 };
 
 export type ErrorDetailKey = keyof typeof ErrorDetails;

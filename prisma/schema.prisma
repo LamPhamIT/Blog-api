@@ -18,28 +18,31 @@ datasource db {
 //
 
 model User {
-  id          String        @id @default(cuid())
-  email       String        @unique
-  password    String
-  fullName    String?
-  avatarUrl   String?
-  isActive    Boolean       @default(true)
-  createdAt   DateTime      @default(now())
-  updatedAt   DateTime      @updatedAt
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  fullName  String?
+  avatarUrl String?
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  roles       UserRole[]
+  roles  UserRole[]
+  Series Series[]
+  Post   Post[]
+  Upvote Upvote[]
 }
 
 model Role {
-  id          Int            @id @default(autoincrement())
-  name        String          @unique
+  id          Int              @id @default(autoincrement())
+  name        String           @unique
   description String?
   users       UserRole[]
   permissions RolePermission[]
 }
 
 model Permission {
-  id          Int             @id @default(autoincrement())
+  id          Int              @id @default(autoincrement())
   name        String           @unique
   description String?
   roles       RolePermission[]
@@ -49,8 +52,8 @@ model UserRole {
   userId String
   roleId Int
 
-  user   User @relation(fields: [userId], references: [id])
-  role   Role @relation(fields: [roleId], references: [id])
+  user User @relation(fields: [userId], references: [id])
+  role Role @relation(fields: [roleId], references: [id])
 
   @@id([userId, roleId])
 }
@@ -59,8 +62,78 @@ model RolePermission {
   roleId       Int
   permissionId Int
 
-  role        Role        @relation(fields: [roleId], references: [id])
-  permission  Permission  @relation(fields: [permissionId], references: [id])
+  role       Role       @relation(fields: [roleId], references: [id])
+  permission Permission @relation(fields: [permissionId], references: [id])
 
   @@id([roleId, permissionId])
+}
+
+model Series {
+  id          Int     @id @default(autoincrement())
+  title       String
+  slug        String  @unique
+  description String? @db.Text
+  thumbnail   String?
+
+  authorId  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  author User   @relation(fields: [authorId], references: [id])
+  posts  Post[]
+
+  @@index([authorId])
+}
+
+model Post {
+  id        String  @id @default(cuid())
+  title     String
+  slug      String  @unique
+  content   String  @db.Text
+  excerpt   String? @db.Text
+  thumbnail String?
+
+  published Boolean @default(true)
+  viewCount Int     @default(0)
+  readTime  Int?
+
+  authorId String
+  seriesId Int?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  author  User     @relation(fields: [authorId], references: [id])
+  series  Series?  @relation(fields: [seriesId], references: [id])
+  upvotes Upvote[]
+  tags      Tag[]
+
+  @@index([authorId])
+  @@index([seriesId])
+  @@index([published, createdAt(sort: Desc)])
+}
+
+model Upvote {
+  id        Int      @id @default(autoincrement())
+  userId    String
+  postId    String
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  post Post @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, postId])
+  @@index([postId])
+}
+
+model Tag {
+  id          Int      @id @default(autoincrement())
+  name        String   @unique
+  slug        String  
+  description String?
+  
+  posts       Post[]  
+  
+  createdAt   DateTime @default(now())
 }

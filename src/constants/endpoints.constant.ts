@@ -6,4 +6,9 @@ export const ENDPOINTS = {
     register: '/register',
     login: '/login',
   },
+  posts: {
+    base: `${API_PREFIX}${API_VERSION}/posts`,
+    root: '/',       
+    detail: '/:slug', 
+  },
 };

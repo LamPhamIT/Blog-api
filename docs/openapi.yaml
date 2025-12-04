@@ -4,15 +4,21 @@ info:
   version: "1.0.0"
   description: API Documentation for Blog Platform
 servers:
-  - url: http://localhost:3000/api/v1
+  - url: http://localhost:3001/api/v1
     description: Local Development
   - url: http://blog-api.lamphamit.site:3000/api/v1
     description: Production Server
 
 paths:
-  # Import Auth module
-  $ref: "./modules/auth.yaml#/paths"
-  
+  # Auth Module
+  /auth/register:
+    $ref: "./modules/auth.yaml#/paths/~1auth~1register"
+  /auth/login:
+    $ref: "./modules/auth.yaml#/paths/~1auth~1login"
+
+  # Post Module
+  /posts:
+    $ref: "./modules/post.yaml#/paths/~1posts"
 
 components:
   securitySchemes:
