@@ -7,5 +7,7 @@
   "user.email.exists": "The provided email is already in use.",
   "role.missing": "A required role is missing for this operation.",
   "auth.invalid.credential": "The provided credentials are invalid.",
-  "auth.login.success": "Login successful."
+  "auth.login.success": "Login successful.",
+  "auth.token.missing": "Access token is missing in request header.",
+  "auth.token.invalid": "The provided token is invalid or has expired."
 }

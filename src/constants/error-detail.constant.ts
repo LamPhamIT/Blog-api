@@ -29,6 +29,14 @@ export const ErrorDetails: Record<string, ErrorDetail> = {
     code: 'INVALID_CREDENTIAL',
     detail: 'The provided credentials are invalid.',
   },
+  TOKEN_MISSING: {
+    code: 'TOKEN_MISSING',
+    detail: 'Authentication token is missing or malformed.',
+  },
+  TOKEN_INVALID: {
+    code: 'TOKEN_INVALID',
+    detail: 'Authentication token is invalid or expired.',
+  },
 };
 
 export type ErrorDetailKey = keyof typeof ErrorDetails;
