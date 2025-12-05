@@ -31,11 +31,21 @@ class PostController {
 
       const result = await postService.getAll(query);
 
-      return res.status(StatusCodes.OK).json({
-        success: true,
-        message: PostKeys.POST_FETCH_SUCCESS,
-        data: result,
-      });
+      return res.status(StatusCodes.OK).json(successResponse(PostKeys.POST_FETCH_SUCCESS, result));
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  getDetail = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { slug } = req.params;
+
+      const post = await postService.getDetail(slug);
+
+      return res.status(StatusCodes.OK).json(
+        successResponse(PostKeys.POST_FETCH_SUCCESS, post)
+      );
     } catch (error) {
       next(error);
     }

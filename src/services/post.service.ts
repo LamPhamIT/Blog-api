@@ -4,7 +4,7 @@ import { PostItem, PostRepository } from '../repositories/post.repository';
 import { SeriesRepository } from '../repositories/series.repository';
 import { AppError } from '../errors/app.error';
 import { StatusCodes } from 'http-status-codes';
-import { CommonKeys } from '../constants/message-key';
+import { CommonKeys, PostKeys } from '../constants/message-key';
 import { ErrorDetails } from '../constants/error-detail.constant';
 import { Prisma } from '@prisma/client';
 import { PostConstants } from '../constants/post.constant';
@@ -95,6 +95,26 @@ class PostService {
       },
     };
   }
+
+    async getDetail(slug: string) {
+        const post = await postRepository.findBySlug(slug);
+
+        if (!post) {
+        throw new AppError(
+            StatusCodes.NOT_FOUND,
+            PostKeys.POST_NOT_FOUND,
+            ErrorDetails.POST_NOT_FOUND,
+            slug
+        );
+        }
+
+        postRepository.increaseView(post.id).catch((err: unknown) => {
+            // TODO: handle error properly, maybe log it
+            console.error('Failed to increase view:', err);
+        });
+
+        return post;
+    }
 }
 
 export default new PostService();

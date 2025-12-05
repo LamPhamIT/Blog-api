@@ -33,6 +33,13 @@ paths:
           schema:
             type: string
           description: Filter by Tag Slug (e.g., "nodejs", "react")
+        # --- BỔ SUNG THAM SỐ NÀY ---
+        - in: query
+          name: isDraft
+          schema:
+            type: boolean
+            default: false
+          description: If true, returns draft posts (unpublished). Usually requires Admin role.
       responses:
         "200":
           description: Get list successfully
@@ -41,13 +48,17 @@ paths:
               schema:
                 $ref: "#/components/schemas/PostListResponse"
         "400":
-          description: Validation failed or Business logic violation (e.g., Series not found, Tags limit exceeded)
+          description: Validation failed
           content:
             application/json:
               schema:
                 $ref: "../common/error.yaml#/ValidationErrorResponse"
         "500":
           description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "../common/error.yaml#/InternalServerErrorResponse"
     post:
       summary: Create a new blog post
       description: Create a new post with auto-generated unique slug. Supports attaching series and tags (max 5 tags).
@@ -67,18 +78,58 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/PostResponse"
+                $ref: "#/components/schemas/CreatePostResponse"
         "400":
-          description: Validation failed or Business logic violation (e.g., Series not found, Tags limit exceeded)
+          description: Validation failed
           content:
             application/json:
               schema:
                 $ref: "../common/error.yaml#/ValidationErrorResponse"
         "401":
-          description: Unauthorized - Access token is missing or invalid
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "../common/error.yaml#/UnauthorizedErrorResponse"
         "500":
           description: Internal Server Error
-
+          content:
+            application/json:
+              schema:
+                $ref: "../common/error.yaml#/InternalServerErrorResponse"
+  /posts/{slug}:
+    get:
+      summary: Get post details by slug
+      description: Retrieve full details of a specific post. This action will automatically increment the view count.
+      tags:
+        - Posts
+      parameters:
+        - in: path
+          name: slug
+          required: true
+          schema:
+            type: string
+          description: The unique slug of the post
+          example: "huong-dan-clean-architecture-nodejs"
+      responses:
+        "200":
+          description: Get detail successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PostDetailResponse"
+        "404":
+          description: Post not found
+          content:
+            application/json:
+              schema:
+                $ref: "../common/error.yaml#/NotFoundErrorResponse"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "../common/error.yaml#/InternalServerErrorResponse"
 components:
   schemas:
     # --- REQUEST BODY ---
@@ -134,7 +185,7 @@ components:
           example: ["NodeJS", "Architecture", "Backend"]
 
     # --- RESPONSE WRAPPER ---
-    PostResponse:
+    CreatePostResponse:
       type: object
       properties:
         success:
@@ -146,6 +197,21 @@ components:
         message:
           type: string
           example: Post created successfully.
+        data:
+          $ref: "#/components/schemas/PostDto"
+    
+    PostDetailResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        messageKey:
+          type: string
+          example: common.success
+        message:
+          type: string
+          example: Operation successful.
         data:
           $ref: "#/components/schemas/PostDto"
 
@@ -239,6 +305,7 @@ components:
         slug:
           type: string
           example: "nodejs"
+
     PostListResponse:
       type: object
       properties:
@@ -248,7 +315,6 @@ components:
         messageKey:
           type: string
           example: common.success
-        # Toàn bộ kết quả (list + meta) nằm trong key 'data' này
         data:
           type: object
           properties:
@@ -258,6 +324,7 @@ components:
                 $ref: "#/components/schemas/PostDto"
             meta:
               $ref: "#/components/schemas/PaginationMeta"
+
     PaginationMeta:
       type: object
       properties:

@@ -58,6 +58,10 @@ export const ErrorDetails: Record<string, ErrorDetail> = {
     code: 'NO_FILE_UPLOADED',
     detail: 'No file uploaded. Please provide a file in the request.',
   },
+  POST_NOT_FOUND: {
+    code: 'POST_NOT_FOUND',
+    detail: 'The specified post was not found.',
+  },
 };
 
 export type ErrorDetailKey = keyof typeof ErrorDetails;

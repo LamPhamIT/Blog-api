@@ -12,5 +12,6 @@
   "auth.token.invalid": "The provided token is invalid or has expired.",
   "upload.image.success": "Image uploaded successfully",
   "post.create.success": "Post created successfully",
-  "post.fetch.success": "Posts fetched successfully"
+  "post.fetch.success": "Post(s) fetched successfully",
+  "post.not_found": "The specified post was not found with slug: {0}"
 }

@@ -146,7 +146,17 @@ paths:
               schema:
                 $ref: '#/paths/~1posts/get/responses/400/content/application~1json/schema'
         '401':
-          description: Bad credentials
+          description: Unauthorized (Token missing or invalid)
+          content:
+            application/json:
+              schema:
+                $ref: '#/paths/~1posts/post/responses/401/content/application~1json/schema'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/paths/~1posts/get/responses/500/content/application~1json/schema'
   /posts:
     get:
       summary: Get list of posts
@@ -181,6 +191,12 @@ paths:
           schema:
             type: string
           description: 'Filter by Tag Slug (e.g., "nodejs", "react")'
+        - in: query
+          name: isDraft
+          schema:
+            type: boolean
+            default: false
+          description: 'If true, returns draft posts (unpublished). Usually requires Admin role.'
       responses:
         '200':
           description: Get list successfully
@@ -218,7 +234,7 @@ paths:
                             type: integer
                             example: 5
         '400':
-          description: 'Validation failed or Business logic violation (e.g., Series not found, Tags limit exceeded)'
+          description: Validation failed
           content:
             application/json:
               schema:
@@ -252,6 +268,23 @@ paths:
                           example: email
         '500':
           description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  messageKey:
+                    type: string
+                    example: internal.server.error
+                  message:
+                    type: string
+                    example: An unexpected error occurred on the server.
+                  errors:
+                    type: array
+                    example: []
     post:
       summary: Create a new blog post
       description: Create a new post with auto-generated unique slug. Supports attaching series and tags (max 5 tags).
@@ -411,15 +444,94 @@ paths:
                               type: string
                               example: nodejs
         '400':
-          description: 'Validation failed or Business logic violation (e.g., Series not found, Tags limit exceeded)'
+          description: Validation failed
           content:
             application/json:
               schema:
                 $ref: '#/paths/~1posts/get/responses/400/content/application~1json/schema'
         '401':
-          description: Unauthorized - Access token is missing or invalid
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  messageKey:
+                    type: string
+                    example: auth.token_missing
+                  message:
+                    type: string
+                    example: Authentication token is missing.
+                  errors:
+                    type: array
+                    example: []
         '500':
           description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/paths/~1posts/get/responses/500/content/application~1json/schema'
+  '/posts/{slug}':
+    get:
+      summary: Get post details by slug
+      description: Retrieve full details of a specific post. This action will automatically increment the view count.
+      tags:
+        - Posts
+      parameters:
+        - in: path
+          name: slug
+          required: true
+          schema:
+            type: string
+          description: The unique slug of the post
+          example: huong-dan-clean-architecture-nodejs
+      responses:
+        '200':
+          description: Get detail successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  messageKey:
+                    type: string
+                    example: common.success
+                  message:
+                    type: string
+                    example: Operation successful.
+                  data:
+                    $ref: '#/paths/~1posts/post/responses/201/content/application~1json/schema/properties/data'
+        '404':
+          description: Post not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  messageKey:
+                    type: string
+                    example: not.found
+                  message:
+                    type: string
+                    example: The requested resource was not found.
+                  errors:
+                    type: array
+                    example: []
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/paths/~1posts/get/responses/500/content/application~1json/schema'
   /upload/image:
     post:
       summary: Upload an image file

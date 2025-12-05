@@ -19,10 +19,14 @@ paths:
   # Post Module
   /posts:
     $ref: "./modules/post.yaml#/paths/~1posts"
-    
+
+  /posts/{slug}:
+    $ref: "./modules/post.yaml#/paths/~1posts~1{slug}"
 
   /upload/image:
     $ref: "./modules/upload.yaml#/paths/~1upload~1image"
+
+  
 
   
 

@@ -34,3 +34,9 @@ export const GetPostsQuerySchema = z.object({
 });
 
 export type GetPostsQueryDTO = z.infer<typeof GetPostsQuerySchema>;
+
+export const GetPostDetailSchema = z.object({
+  slug: z.string().min(1, 'Slug is required'),
+});
+
+export type GetPostDetailDTO = z.infer<typeof GetPostDetailSchema>;

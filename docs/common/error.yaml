@@ -29,9 +29,52 @@ ValidationErrorResponse:
     details:
       type: array
       items:
-        # Trỏ đến definition ngay bên trên trong cùng file này
         $ref: "#/ValidationErrorDetail"
-
+UnauthorizedErrorResponse:
+  type: object
+  properties:
+    success:
+      type: boolean
+      example: false
+    messageKey:
+      type: string
+      example: auth.token_missing
+    message:
+      type: string
+      example: Authentication token is missing.
+    errors:
+      type: array
+      example: []
+NotFoundErrorResponse:
+  type: object
+  properties:
+    success:
+      type: boolean
+      example: false
+    messageKey:
+      type: string
+      example: not.found
+    message:
+      type: string
+      example: The requested resource was not found.
+    errors:
+      type: array
+      example: []
+InternalServerErrorResponse:
+  type: object
+  properties:
+    success:
+      type: boolean
+      example: false
+    messageKey:
+      type: string
+      example:  internal.server.error
+    message:
+      type: string
+      example: An unexpected error occurred on the server.
+    errors:
+      type: array
+      example: []
 ErrorResponse:
   type: object
   properties:
@@ -47,7 +90,6 @@ ErrorResponse:
     message:
       type: string
       example: "The provided email is already in use."
-    # details là optional, lỗi chung thường không có field cụ thể
     details:
       type: array
       items: 
