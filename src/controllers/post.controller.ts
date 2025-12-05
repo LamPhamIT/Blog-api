@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
-import { CreatePostDTO } from '../dtos/post.dto';
+import { CreatePostDTO, GetPostsQueryDTO } from '../dtos/post.dto';
 import { successResponse } from '../utils/response.factory';
 import postService from '../services/post.service';
 import { StatusCodes } from 'http-status-codes';
@@ -20,6 +20,22 @@ class PostController {
       return res
         .status(StatusCodes.CREATED)
         .json(successResponse(PostKeys.POST_CREATED, post));
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  getAll = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const query = req.query as unknown as GetPostsQueryDTO;
+
+      const result = await postService.getAll(query);
+
+      return res.status(StatusCodes.OK).json({
+        success: true,
+        message: PostKeys.POST_FETCH_SUCCESS,
+        data: result,
+      });
     } catch (error) {
       next(error);
     }

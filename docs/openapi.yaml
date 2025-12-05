@@ -19,9 +19,12 @@ paths:
   # Post Module
   /posts:
     $ref: "./modules/post.yaml#/paths/~1posts"
+    
 
   /upload/image:
     $ref: "./modules/upload.yaml#/paths/~1upload~1image"
+
+  
 
 components:
   securitySchemes:

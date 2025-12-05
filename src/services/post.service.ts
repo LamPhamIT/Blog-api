@@ -1,5 +1,5 @@
 import slugify from 'slugify';
-import { CreatePostDTO } from '../dtos/post.dto';
+import { CreatePostDTO, GetPostsQueryDTO } from '../dtos/post.dto';
 import { PostItem, PostRepository } from '../repositories/post.repository';
 import { SeriesRepository } from '../repositories/series.repository';
 import { AppError } from '../errors/app.error';
@@ -78,6 +78,22 @@ class PostService {
       }
       throw error;
     }
+  }
+
+  async getAll(query: GetPostsQueryDTO) {
+    const { posts, total } = await postRepository.findAll(query);
+
+    const totalPages = Math.ceil(total / query.limit);
+
+    return {
+      data: posts,
+      meta: {
+        page: query.page,
+        limit: query.limit,
+        total,
+        totalPages,
+      },
+    };
   }
 }
 

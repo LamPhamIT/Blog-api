@@ -1,5 +1,53 @@
 paths:
   /posts:
+    get:
+      summary: Get list of posts
+      description: Retrieve a paginated list of posts with filtering options (search, series, tags).
+      tags:
+        - Posts
+      parameters:
+        - in: query
+          name: page
+          schema:
+            type: integer
+            default: 1
+          description: Page number
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            default: 10
+          description: Number of items per page
+        - in: query
+          name: search
+          schema:
+            type: string
+          description: Search by post title
+        - in: query
+          name: seriesId
+          schema:
+            type: integer
+          description: Filter by Series ID
+        - in: query
+          name: tagSlug
+          schema:
+            type: string
+          description: Filter by Tag Slug (e.g., "nodejs", "react")
+      responses:
+        "200":
+          description: Get list successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PostListResponse"
+        "400":
+          description: Validation failed or Business logic violation (e.g., Series not found, Tags limit exceeded)
+          content:
+            application/json:
+              schema:
+                $ref: "../common/error.yaml#/ValidationErrorResponse"
+        "500":
+          description: Internal Server Error
     post:
       summary: Create a new blog post
       description: Create a new post with auto-generated unique slug. Supports attaching series and tags (max 5 tags).
@@ -191,3 +239,37 @@ components:
         slug:
           type: string
           example: "nodejs"
+    PostListResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        messageKey:
+          type: string
+          example: common.success
+        # Toàn bộ kết quả (list + meta) nằm trong key 'data' này
+        data:
+          type: object
+          properties:
+            data:
+              type: array
+              items:
+                $ref: "#/components/schemas/PostDto"
+            meta:
+              $ref: "#/components/schemas/PaginationMeta"
+    PaginationMeta:
+      type: object
+      properties:
+        page:
+          type: integer
+          example: 1
+        limit:
+          type: integer
+          example: 10
+        total:
+          type: integer
+          example: 50
+        totalPages:
+          type: integer
+          example: 5

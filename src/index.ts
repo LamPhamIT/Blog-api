@@ -13,6 +13,7 @@ const port = systemConfig.PORT;
 const swaggerDocument = YAML.load('./docs/bundled.yaml') as JsonObject;
 
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 

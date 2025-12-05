@@ -1,9 +1,10 @@
 import { Router } from 'express';
 import { validate } from '../middleware/validation.middleware';
 import { authenticate } from '../middleware/auth.middleware';
-import { CreatePostSchema } from '../dtos/post.dto';
+import { CreatePostSchema, GetPostsQuerySchema } from '../dtos/post.dto';
 import postController from '../controllers/post.controller';
 import { ENDPOINTS } from '../constants/endpoints.constant';
+import { ValidationTarget } from '../constants/validation.constant';
 
 const router = Router();
 
@@ -12,6 +13,12 @@ router.post(
   authenticate,
   validate(CreatePostSchema),
   postController.create,
+);
+
+router.get(
+  ENDPOINTS.posts.root,
+  validate(GetPostsQuerySchema, ValidationTarget.QUERY),
+  postController.getAll,
 );
 
 export default router;

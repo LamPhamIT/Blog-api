@@ -8,9 +8,9 @@ const router = Router();
 
 router.post(
   ENDPOINTS.upload.image,
-  authenticate,                     
+  authenticate,
   uploadMiddleware.single('image'),
-  uploadController.uploadImage
+  uploadController.uploadImage,
 );
 
 export default router;

@@ -23,3 +23,14 @@ export const CreatePostSchema = z.object({
 });
 
 export type CreatePostDTO = z.infer<typeof CreatePostSchema>;
+
+export const GetPostsQuerySchema = z.object({
+  page: z.coerce.number().min(1).default(1),
+  limit: z.coerce.number().min(1).max(100).default(10),
+  search: z.string().optional(),
+  seriesId: z.coerce.number().optional(),
+  tagSlug: z.string().optional(),
+  isDraft: z.coerce.boolean().optional(),
+});
+
+export type GetPostsQueryDTO = z.infer<typeof GetPostsQuerySchema>;

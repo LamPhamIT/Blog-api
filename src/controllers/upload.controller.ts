@@ -6,27 +6,25 @@ import { CommonKeys, UploadKeys } from '../constants/message-key';
 import { ErrorDetails } from '../constants/error-detail.constant';
 
 class UploadController {
-  
   uploadImage = (req: Request, res: Response, next: NextFunction) => {
     try {
       if (!req.file) {
         throw new AppError(
-            StatusCodes.BAD_REQUEST, 
-            CommonKeys.VALIDATION_FAILED, 
-            ErrorDetails.NO_FILE_UPLOADED
+          StatusCodes.BAD_REQUEST,
+          CommonKeys.VALIDATION_FAILED,
+          ErrorDetails.NO_FILE_UPLOADED,
         );
       }
       const data = {
-        url: req.file.path, 
+        url: req.file.path,
         publicId: req.file.filename,
         format: req.file.mimetype,
-        size: req.file.size
+        size: req.file.size,
       };
 
-      return res.status(StatusCodes.OK).json(
-        successResponse(UploadKeys.IMAGE_UPLOAD_SUCCESS, data)
-      );
-
+      return res
+        .status(StatusCodes.OK)
+        .json(successResponse(UploadKeys.IMAGE_UPLOAD_SUCCESS, data));
     } catch (error) {
       next(error);
     }

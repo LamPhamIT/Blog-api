@@ -1,3 +1,3 @@
 export const UploadKeys = {
-    IMAGE_UPLOAD_SUCCESS: 'upload.image.success',
-}
+  IMAGE_UPLOAD_SUCCESS: 'upload.image.success',
+};

@@ -1,5 +1,5 @@
 import { prisma } from '../prisma/client';
-import { CreatePostDTO } from '../dtos/post.dto';
+import { CreatePostDTO, GetPostsQueryDTO } from '../dtos/post.dto';
 import { Prisma } from '@prisma/client';
 import slugify from 'slugify';
 
@@ -86,6 +86,53 @@ export class PostRepository {
       where: {
         slug: slug,
       },
+    });
+  }
+
+  async findAll(query: GetPostsQueryDTO) {
+    const { page, limit, search, seriesId, tagSlug, isDraft } = query;
+    const skip = (page - 1) * limit;
+
+    const where: Prisma.PostWhereInput = {
+      published: isDraft ? undefined : true,
+
+      ...(search && {
+        title: { contains: search, mode: 'insensitive' },
+      }),
+
+      ...(seriesId && { seriesId: seriesId }),
+
+      ...(tagSlug && {
+        tags: {
+          some: { slug: tagSlug },
+        },
+      }),
+    };
+
+    const posts = await prisma.post.findMany({
+      where,
+      skip,
+      take: limit,
+      orderBy: { createdAt: 'desc' },
+      select: postSelect,
+    });
+
+    const total = await prisma.post.count({ where });
+
+    return { posts, total };
+  }
+
+  async findBySlug(slug: string) {
+    return await prisma.post.findUnique({
+      where: { slug },
+      select: postSelect,
+    });
+  }
+
+  async increaseView(id: string) {
+    await prisma.post.update({
+      where: { id },
+      data: { viewCount: { increment: 1 } },
     });
   }
 }
