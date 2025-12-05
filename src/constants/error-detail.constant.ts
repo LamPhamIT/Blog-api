@@ -43,8 +43,22 @@ export const ErrorDetails: Record<string, ErrorDetail> = {
   },
   TAGS_LIMIT_EXCEEDED: {
     code: 'TAGS_LIMIT_EXCEEDED',
-    detail: 'You have exceeded the maximum number of tags allowed per post (Max {0}).',
+    detail:
+      'You have exceeded the maximum number of tags allowed per post (Max {0}).',
   },
+  FILE_TOO_LARGE: {
+    code: 'FILE_TOO_LARGE',
+    detail: 'The uploaded file exceeds the maximum allowed size.',
+  },
+  UNSUPPORTED_FILE_TYPE: {
+    code: 'UNSUPPORTED_FILE_TYPE',
+    detail: 'The uploaded file type is not supported.',
+  },
+  NO_FILE_UPLOADED: {
+    code: 'NO_FILE_UPLOADED',
+    detail: 'No file uploaded. Please provide a file in the request.',
+  },
+  
 };
 
 export type ErrorDetailKey = keyof typeof ErrorDetails;

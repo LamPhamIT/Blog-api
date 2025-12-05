@@ -1,0 +1,72 @@
+paths:
+  /upload/image:
+    post:
+      summary: Upload an image file
+      description: Upload a single image to Cloudinary. Supported formats are jpg, png, jpeg, webp. Maximum file size is 5MB.
+      tags:
+        - Upload
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - image
+              properties:
+                image:
+                  type: string
+                  format: binary
+                  description: The image file to be uploaded.
+      responses:
+        "200":
+          description: Upload successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UploadResponse"
+        "400":
+          description: Validation failed (No file, wrong format, file too large)
+          content:
+            application/json:
+              schema:
+                $ref: "../common/error.yaml#/ValidationErrorResponse"
+        "401":
+          description: Unauthorized (Token missing or invalid)
+        "500":
+          description: Internal Server Error
+
+components:
+  schemas:
+    UploadResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        messageKey:
+          type: string
+          example: common.success
+        message:
+          type: string
+          example: Operation successful.
+        data:
+          type: object
+          properties:
+            url:
+              type: string
+              description: The public URL of the uploaded image.
+              example: "https://res.cloudinary.com/your-cloud/image/upload/v17100000/blog-uploads/test-image.jpg"
+            publicId:
+              type: string
+              description: The unique identifier on Cloudinary.
+              example: "blog-uploads/test-image-17100000"
+            format:
+              type: string
+              example: "image/jpeg"
+            size:
+              type: integer
+              description: Size in bytes.
+              example: 102400

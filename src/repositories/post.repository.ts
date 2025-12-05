@@ -37,13 +37,17 @@ const postSelect = {
 export type PostItem = Prisma.PostGetPayload<{ select: typeof postSelect }>;
 
 export class PostRepository {
-  async create(userId: string, slug: string, data: CreatePostDTO): Promise<PostItem> {
+  async create(
+    userId: string,
+    slug: string,
+    data: CreatePostDTO,
+  ): Promise<PostItem> {
     const tagsConnect = data.tags?.map((tagName) => {
       return {
-        where: { name: tagName }, 
-        create: { 
-          name: tagName, 
-          slug: slugify(tagName, { lower: true, strict: true, trim: true }) 
+        where: { name: tagName },
+        create: {
+          name: tagName,
+          slug: slugify(tagName, { lower: true, strict: true, trim: true }),
         },
       };
     });
@@ -66,11 +70,12 @@ export class PostRepository {
             connect: { id: data.seriesId },
           },
         }),
-        ...(tagsConnect && tagsConnect.length > 0 && {
-          tags: {
-            connectOrCreate: tagsConnect,
-          },
-        }),
+        ...(tagsConnect &&
+          tagsConnect.length > 0 && {
+            tags: {
+              connectOrCreate: tagsConnect,
+            },
+          }),
       },
       select: postSelect,
     });
@@ -79,8 +84,8 @@ export class PostRepository {
   async countBySlug(slug: string): Promise<number> {
     return await prisma.post.count({
       where: {
-        slug: slug
-      }
+        slug: slug,
+      },
     });
   }
 }

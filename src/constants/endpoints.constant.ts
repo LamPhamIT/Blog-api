@@ -8,7 +8,11 @@ export const ENDPOINTS = {
   },
   posts: {
     base: `${API_PREFIX}${API_VERSION}/posts`,
-    root: '/',       
-    detail: '/:slug', 
+    root: '/',
+    detail: '/:slug',
   },
+  upload: {
+    base: `${API_PREFIX}${API_VERSION}/upload`,
+    image: '/image',
+  }
 };

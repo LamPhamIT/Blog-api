@@ -7,8 +7,7 @@ import { PostKeys } from '../constants/message-key';
 import { AuthenticatedRequest } from '../types/auth';
 
 class PostController {
-    
-    create = async (
+  create = async (
     req: Request<Record<string, unknown>, unknown, CreatePostDTO>,
     res: Response,
     next: NextFunction,
@@ -17,7 +16,7 @@ class PostController {
       const authReq = req as AuthenticatedRequest;
       const userId = authReq.user.userId;
       const post = await postService.createPost(userId, req.body);
-      
+
       return res
         .status(StatusCodes.CREATED)
         .json(successResponse(PostKeys.POST_CREATED, post));

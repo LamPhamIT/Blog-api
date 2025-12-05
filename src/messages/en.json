@@ -9,5 +9,6 @@
   "auth.invalid.credential": "The provided credentials are invalid.",
   "auth.login.success": "Login successful.",
   "auth.token.missing": "Access token is missing in request header.",
-  "auth.token.invalid": "The provided token is invalid or has expired."
+  "auth.token.invalid": "The provided token is invalid or has expired.",
+  "upload.image.success": "Image uploaded successfully"
 }
