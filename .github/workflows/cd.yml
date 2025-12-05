@@ -40,5 +40,6 @@ jobs:
             npx swagger-cli bundle docs/openapi.yaml -o docs/bundled.yaml --type yaml
             
             npm run migrate:prod
+            npx prisma generate
             pm2 reload ecosystem.config.js --env production
           "
