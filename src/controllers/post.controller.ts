@@ -15,7 +15,7 @@ class PostController {
     try {
       const authReq = req as AuthenticatedRequest;
       const userId = authReq.user.userId;
-      
+
       const post = await postService.createPost(userId, req.body);
 
       return res
@@ -29,7 +29,7 @@ class PostController {
   getAll = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const query = req.query as unknown as GetPostsQueryDTO;
-      
+
       const currentUserId = req.user?.userId;
 
       const result = await postService.getAll(query, currentUserId);
@@ -45,7 +45,7 @@ class PostController {
   getDetail = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { slug } = req.params;
-      
+
       const currentUserId = req.user?.userId;
 
       const post = await postService.getDetail(slug, currentUserId);
@@ -66,9 +66,9 @@ class PostController {
 
       const result = await postService.toggleUpvote(userId, id);
 
-      return res.status(StatusCodes.OK).json(
-        successResponse(PostKeys.POST_UPVOTE_SUCCESS, result)
-      );
+      return res
+        .status(StatusCodes.OK)
+        .json(successResponse(PostKeys.POST_UPVOTE_SUCCESS, result));
     } catch (error) {
       next(error);
     }

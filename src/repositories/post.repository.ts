@@ -1,6 +1,6 @@
 import { prisma } from '../prisma/client';
 import { CreatePostDTO, GetPostsQueryDTO } from '../dtos/post.dto';
-import { Prisma } from '@prisma/client';
+import { PostContentType, Prisma } from '@prisma/client';
 import slugify from 'slugify';
 
 export interface PostItem {
@@ -9,7 +9,9 @@ export interface PostItem {
   slug: string;
   thumbnail: string | null;
   excerpt: string | null;
-  content: string;
+  contentType: PostContentType;
+  content: Prisma.JsonValue;
+  contentHtml: string | null;
   published: boolean;
   createdAt: Date;
   viewCount: number;
@@ -43,7 +45,9 @@ export class PostRepository {
       slug: true,
       thumbnail: true,
       excerpt: true,
+      contentType: true,
       content: true,
+      contentHtml: true,
       published: true,
       createdAt: true,
       viewCount: true,
@@ -74,7 +78,6 @@ export class PostRepository {
           upvotes: true,
         },
       },
-
       upvotes: currentUserId
         ? {
             where: { userId: currentUserId },
@@ -84,7 +87,12 @@ export class PostRepository {
     } satisfies Prisma.PostSelect;
   }
 
-  async create(userId: string, slug: string, data: CreatePostDTO): Promise<PostItem> {
+  async create(
+    userId: string,
+    slug: string,
+    data: CreatePostDTO,
+    htmlContent: string,
+  ): Promise<PostItem> {
     const tagsConnect = data.tags?.map((tagName) => {
       return {
         where: { name: tagName },
@@ -99,7 +107,11 @@ export class PostRepository {
       data: {
         title: data.title,
         slug: slug,
-        content: data.content,
+
+        contentType: data.contentType,
+        content: data.content as Prisma.InputJsonValue,
+        contentHtml: htmlContent,
+
         excerpt: data.description,
         thumbnail: data.thumbnail,
         published: data.published,
@@ -122,7 +134,6 @@ export class PostRepository {
       select: this.getPostSelect(userId),
     });
 
-    // ✅ Ép kiểu để khớp với Interface PostItem
     return post as unknown as PostItem;
   }
 
@@ -134,8 +145,10 @@ export class PostRepository {
     });
   }
 
-  // ✅ Thêm Return Type rõ ràng cho hàm findAll
-  async findAll(query: GetPostsQueryDTO, currentUserId?: string): Promise<{ posts: PostItem[]; total: number }> {
+  async findAll(
+    query: GetPostsQueryDTO,
+    currentUserId?: string,
+  ): Promise<{ posts: PostItem[]; total: number }> {
     const { page, limit, search, seriesId, tagSlug, isDraft } = query;
     const skip = (page - 1) * limit;
 
@@ -165,7 +178,10 @@ export class PostRepository {
     return { posts: posts as unknown as PostItem[], total };
   }
 
-  async findBySlug(slug: string, currentUserId?: string): Promise<PostItem | null> {
+  async findBySlug(
+    slug: string,
+    currentUserId?: string,
+  ): Promise<PostItem | null> {
     const post = await prisma.post.findUnique({
       where: { slug },
       select: this.getPostSelect(currentUserId),

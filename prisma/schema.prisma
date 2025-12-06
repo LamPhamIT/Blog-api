@@ -85,11 +85,21 @@ model Series {
   @@index([authorId])
 }
 
+enum PostContentType {
+  QUILL_DELTA  
+  MARKDOWN    
+  HTML_RAW    
+}
 model Post {
   id        String  @id @default(cuid())
   title     String
   slug      String  @unique
-  content   String  @db.Text
+
+  contentType PostContentType @default(QUILL_DELTA)
+
+  content     Json
+  contentHtml String?  @db.Text
+
   excerpt   String? @db.Text
   thumbnail String?
 

@@ -1,14 +1,26 @@
 import slugify from 'slugify';
-import { CreatePostDTO, GetPostsQueryDTO, UpvoteResponseDto, PostDto } from '../dtos/post.dto';
+import {
+  CreatePostDTO,
+  GetPostsQueryDTO,
+  UpvoteResponseDto,
+  PostDto,
+} from '../dtos/post.dto';
 import { PostItem, PostRepository } from '../repositories/post.repository';
 import { SeriesRepository } from '../repositories/series.repository';
 import { AppError } from '../errors/app.error';
 import { StatusCodes } from 'http-status-codes';
 import { CommonKeys, PostKeys } from '../constants/message-key';
 import { ErrorDetails } from '../constants/error-detail.constant';
-import { Prisma } from '@prisma/client';
 import { PostConstants } from '../constants/post.constant';
 import { formatString } from '../utils/string.util';
+import { QuillDeltaToHtmlConverter } from 'quill-delta-to-html';
+import { marked } from 'marked';
+import { PostContentType, Prisma } from '@prisma/client';
+import sanitizeHtml from 'sanitize-html';
+
+interface QuillDelta {
+  ops: { insert: string | object; attributes?: object }[];
+}
 
 const postRepository = new PostRepository();
 const seriesRepository = new SeriesRepository();
@@ -36,6 +48,86 @@ class PostService {
     return slug;
   }
 
+  private generateHtml(
+    type: PostContentType,
+    content: Prisma.JsonValue,
+  ): string {
+    try {
+      switch (type) {
+        case PostContentType.QUILL_DELTA: {
+          const delta = content as unknown as QuillDelta;
+
+          // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+          if (!delta.ops || !Array.isArray(delta.ops)) return '';
+
+          const converter = new QuillDeltaToHtmlConverter(delta.ops, {
+            inlineStyles: true,
+          });
+          return converter.convert();
+        }
+
+        case PostContentType.MARKDOWN: {
+          const mdText =
+            typeof content === 'string'
+              ? content
+              : (content as Record<string, string>).text || '';
+
+          const htmlFromMd = marked.parse(mdText) as string;
+          return sanitizeHtml(htmlFromMd);
+        }
+
+        case PostContentType.HTML_RAW: {
+          const rawHtml =
+            typeof content === 'string'
+              ? content
+              : (content as Record<string, string>).html || '';
+
+          return sanitizeHtml(rawHtml, {
+            allowedTags: sanitizeHtml.defaults.allowedTags.concat([
+              'img',
+              'h1',
+              'h2',
+            ]),
+            allowedAttributes: {
+              ...sanitizeHtml.defaults.allowedAttributes,
+              img: ['src', 'alt'],
+            },
+          });
+        }
+
+        default:
+          return '';
+      }
+    } catch (error) {
+      console.error('Error generating HTML:', error);
+      return '';
+    }
+  }
+
+  private extractPlainText(
+    type: PostContentType,
+    content: Prisma.JsonValue,
+  ): string {
+    try {
+      if (type === PostContentType.QUILL_DELTA) {
+        const delta = content as unknown as QuillDelta;
+        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+        if (!delta.ops || !Array.isArray(delta.ops)) return '';
+
+        return delta.ops
+          .map((op) => (typeof op.insert === 'string' ? op.insert : ' '))
+          .join('')
+          .trim();
+      }
+
+      const str =
+        typeof content === 'string' ? content : JSON.stringify(content);
+      return str.substring(0, 1000);
+    } catch {
+      return '';
+    }
+  }
+
   private mapToPostDto(post: PostItem): PostDto {
     return {
       id: post.id,
@@ -43,7 +135,10 @@ class PostService {
       slug: post.slug,
       thumbnail: post.thumbnail,
       excerpt: post.excerpt,
+      contentType: post.contentType,
       content: post.content,
+      contentHtml: post.contentHtml,
+
       viewCount: post.viewCount,
       published: post.published,
       readTime: post.readTime,
@@ -70,6 +165,7 @@ class PostService {
         },
       );
     }
+
     if (data.seriesId) {
       const series = await seriesRepository.findById(data.seriesId);
 
@@ -82,11 +178,29 @@ class PostService {
       }
     }
 
+    const safeContent = data.content as Prisma.JsonValue;
+
+    const htmlContent = this.generateHtml(data.contentType, safeContent);
+    const plainText = this.extractPlainText(data.contentType, safeContent);
+
+    data.description ??=
+      plainText.substring(0, 150) + (plainText.length > 150 ? '...' : '');
+
+    if (!data.readTime) {
+      const wordCount = plainText.split(/\s+/).length;
+      data.readTime = Math.ceil(wordCount / 200) || 1;
+    }
+
     const uniqueSlug = await this.generateUniqueSlug(data.title);
 
     try {
-      const newPost = await postRepository.create(userId, uniqueSlug, data);
-      
+      const newPost = await postRepository.create(
+        userId,
+        uniqueSlug,
+        data,
+        htmlContent,
+      );
+
       return this.mapToPostDto(newPost);
     } catch (error) {
       if (error instanceof Prisma.PrismaClientKnownRequestError) {
@@ -138,23 +252,29 @@ class PostService {
     return this.mapToPostDto(post);
   }
 
-  async toggleUpvote(userId: string, postId: string): Promise<UpvoteResponseDto> {
+  async toggleUpvote(
+    userId: string,
+    postId: string,
+  ): Promise<UpvoteResponseDto> {
     const post = await postRepository.findById(postId);
-    
+
     if (!post) {
       throw new AppError(
         StatusCodes.NOT_FOUND,
         PostKeys.POST_NOT_FOUND,
-        ErrorDetails.POST_NOT_FOUND
+        ErrorDetails.POST_NOT_FOUND,
       );
     }
 
-    const { isUpvoted, totalUpvotes } = await postRepository.toggleUpvote(userId, postId);
+    const { isUpvoted, totalUpvotes } = await postRepository.toggleUpvote(
+      userId,
+      postId,
+    );
 
     return {
       postId,
       isUpvoted,
-      totalUpvotes
+      totalUpvotes,
     };
   }
 }

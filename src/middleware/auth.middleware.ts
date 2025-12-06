@@ -30,7 +30,7 @@ export const authenticate = (
 export const authenticateOptional = (
   req: Request,
   _res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   const authHeader = req.headers.authorization;
 
@@ -46,7 +46,6 @@ export const authenticateOptional = (
   if (decoded) {
     req.user = decoded;
   }
-
 
   next();
 };

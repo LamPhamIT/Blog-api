@@ -1,3 +1,4 @@
+import { PostContentType } from '@prisma/client';
 import z from 'zod';
 
 export const CreatePostSchema = z.object({
@@ -6,9 +7,10 @@ export const CreatePostSchema = z.object({
     .min(10, 'Title must be at least 10 characters long')
     .max(200, 'Title must not exceed 200 characters'),
 
-  content: z
-    .string({ message: 'Content is required' })
-    .min(50, 'Content must be at least 50 characters long'),
+  contentType: z.enum(PostContentType).default(PostContentType.QUILL_DELTA),
+  content: z.unknown().refine((val) => val !== null && val !== undefined, {
+    message: 'Content is required',
+  }),
 
   description: z.string().optional(),
 
@@ -41,7 +43,6 @@ export const GetPostDetailSchema = z.object({
 
 export type GetPostDetailDTO = z.infer<typeof GetPostDetailSchema>;
 
-
 export interface UpvoteResponseDto {
   postId: string;
   isUpvoted: boolean;
@@ -54,12 +55,14 @@ export interface PostDto {
   slug: string;
   excerpt: string | null;
   thumbnail: string | null;
-  content: string;
+  contentType: PostContentType;
+  content: unknown;
+  contentHtml: string | null;
   viewCount: number;
   published: boolean;
   readTime: number | null;
   createdAt: Date;
-  
+
   totalUpvotes: number;
   isUpvoted: boolean;
 

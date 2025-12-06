@@ -387,11 +387,23 @@ paths:
                   maxLength: 200
                   description: The title of the post (will be used to generate slug).
                   example: Understanding Clean Architecture in Node.js
-                content:
+                contentType:
                   type: string
-                  minLength: 50
-                  description: The main content of the post (HTML or Markdown).
-                  example: Clean Architecture is a software design philosophy...
+                  enum:
+                    - QUILL_DELTA
+                    - MARKDOWN
+                    - HTML_RAW
+                  default: QUILL_DELTA
+                  description: Type of the content.
+                content:
+                  type: object
+                  description: 'The source content (JSON Delta for Quill, or Object for others).'
+                  example:
+                    ops:
+                      - insert: 'Hello '
+                      - insert: World
+                        attributes:
+                          bold: true
                 description:
                   type: string
                   nullable: true
@@ -466,9 +478,20 @@ paths:
                         type: string
                         nullable: true
                         example: 'https://example.com/images/clean-arch-banner.jpg'
-                      content:
+                      contentType:
                         type: string
-                        description: 'Full content is usually not returned in list view, but returned in create/detail.'
+                        enum:
+                          - QUILL_DELTA
+                          - MARKDOWN
+                          - HTML_RAW
+                        example: QUILL_DELTA
+                      content:
+                        type: object
+                        description: Source content (JSON)
+                      contentHtml:
+                        type: string
+                        description: Rendered HTML for Web View
+                        example: <p>Hello <strong>World</strong></p>
                       published:
                         type: boolean
                         example: true
