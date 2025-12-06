@@ -6,5 +6,4 @@ export const UserKeys = {
   // Error
   USER_EMAIL_EXISTS: 'user.email.exists',
   USER_NOT_FOUND: 'user.not.found',
-  
 };

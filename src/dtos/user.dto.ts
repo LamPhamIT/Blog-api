@@ -1,4 +1,10 @@
-import { Permission, Role, RolePermission, User, UserRole } from "@prisma/client";
+import {
+  Permission,
+  Role,
+  RolePermission,
+  User,
+  UserRole,
+} from '@prisma/client';
 
 export interface UserProfileDto {
   id: string;
@@ -19,21 +25,21 @@ type UserWithRelations = User & {
   roles: (UserRole & {
     role: Role & {
       permissions: (RolePermission & {
-        permission: Permission
-      })[]
-    }
+        permission: Permission;
+      })[];
+    };
   })[];
   _count?: {
     Post: number;
     Series: number;
-  }
+  };
 };
 
 export const mapToUserProfile = (user: UserWithRelations): UserProfileDto => {
   const roleNames = user.roles.map((ur) => ur.role.name);
 
-  const allPermissions = user.roles.flatMap((ur) => 
-    ur.role.permissions.map((rp) => rp.permission.name)
+  const allPermissions = user.roles.flatMap((ur) =>
+    ur.role.permissions.map((rp) => rp.permission.name),
   );
   const uniquePermissions = [...new Set(allPermissions)];
 
@@ -46,9 +52,11 @@ export const mapToUserProfile = (user: UserWithRelations): UserProfileDto => {
     roles: roleNames,
     permissions: uniquePermissions,
     createdAt: user.createdAt,
-    stats: user._count ? {
-      postsCount: user._count.Post,
-      seriesCount: user._count.Series,
-    } : undefined
+    stats: user._count
+      ? {
+          postsCount: user._count.Post,
+          seriesCount: user._count.Series,
+        }
+      : undefined,
   };
 };

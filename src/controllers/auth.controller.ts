@@ -38,18 +38,18 @@ class AuthController {
   };
 
   getMe = async (req: Request, res: Response, next: NextFunction) => {
-        try {
-          const authReq = req as AuthenticatedRequest;
-          const userId = authReq.user.userId;
-          const user = await userService.getProfile(userId);
-    
-          return res.status(StatusCodes.OK).json(
-            successResponse(UserKeys.USER_FETCH_SUCCESS, user)
-          );
-        } catch (error) {
-          next(error);
-        }
-      };
+    try {
+      const authReq = req as AuthenticatedRequest;
+      const userId = authReq.user.userId;
+      const user = await userService.getProfile(userId);
+
+      return res
+        .status(StatusCodes.OK)
+        .json(successResponse(UserKeys.USER_FETCH_SUCCESS, user));
+    } catch (error) {
+      next(error);
+    }
+  };
 }
 
 export default new AuthController();

@@ -62,20 +62,20 @@ export class UserRepository {
               include: {
                 permissions: {
                   include: {
-                    permission: true
-                  }
-                }
-              }
-            }
-          }
+                    permission: true,
+                  },
+                },
+              },
+            },
+          },
         },
         _count: {
           select: {
             Post: true,
-            Series: true
-          }
-        }
-      }
+            Series: true,
+          },
+        },
+      },
     });
   }
 }

@@ -14,7 +14,7 @@ class UserService {
       throw new AppError(
         StatusCodes.NOT_FOUND,
         UserKeys.USER_NOT_FOUND,
-        ErrorDetails.USER_NOT_FOUND
+        ErrorDetails.USER_NOT_FOUND,
       );
     }
 

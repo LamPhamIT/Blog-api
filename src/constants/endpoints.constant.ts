@@ -16,5 +16,4 @@ export const ENDPOINTS = {
     base: `${API_PREFIX}${API_VERSION}/upload`,
     image: '/image',
   },
-
 };
