@@ -51,4 +51,31 @@ export class UserRepository {
       ...userWithRolesAndPermissions,
     });
   }
+
+  async findByIdWithRoles(id: string) {
+    return await prisma.user.findUnique({
+      where: { id },
+      include: {
+        roles: {
+          include: {
+            role: {
+              include: {
+                permissions: {
+                  include: {
+                    permission: true
+                  }
+                }
+              }
+            }
+          }
+        },
+        _count: {
+          select: {
+            Post: true,
+            Series: true
+          }
+        }
+      }
+    });
+  }
 }

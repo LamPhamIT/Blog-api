@@ -5,6 +5,7 @@ export const ENDPOINTS = {
     base: `${API_PREFIX}${API_VERSION}/auth`,
     register: '/register',
     login: '/login',
+    me: '/me',
   },
   posts: {
     base: `${API_PREFIX}${API_VERSION}/posts`,
@@ -15,4 +16,5 @@ export const ENDPOINTS = {
     base: `${API_PREFIX}${API_VERSION}/upload`,
     image: '/image',
   },
+
 };

@@ -31,7 +31,9 @@ class PostController {
 
       const result = await postService.getAll(query);
 
-      return res.status(StatusCodes.OK).json(successResponse(PostKeys.POST_FETCH_SUCCESS, result));
+      return res
+        .status(StatusCodes.OK)
+        .json(successResponse(PostKeys.POST_FETCH_SUCCESS, result));
     } catch (error) {
       next(error);
     }
@@ -43,9 +45,9 @@ class PostController {
 
       const post = await postService.getDetail(slug);
 
-      return res.status(StatusCodes.OK).json(
-        successResponse(PostKeys.POST_FETCH_SUCCESS, post)
-      );
+      return res
+        .status(StatusCodes.OK)
+        .json(successResponse(PostKeys.POST_FETCH_SUCCESS, post));
     } catch (error) {
       next(error);
     }

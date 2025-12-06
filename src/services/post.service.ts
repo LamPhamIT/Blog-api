@@ -96,25 +96,25 @@ class PostService {
     };
   }
 
-    async getDetail(slug: string) {
-        const post = await postRepository.findBySlug(slug);
+  async getDetail(slug: string) {
+    const post = await postRepository.findBySlug(slug);
 
-        if (!post) {
-        throw new AppError(
-            StatusCodes.NOT_FOUND,
-            PostKeys.POST_NOT_FOUND,
-            ErrorDetails.POST_NOT_FOUND,
-            slug
-        );
-        }
-
-        postRepository.increaseView(post.id).catch((err: unknown) => {
-            // TODO: handle error properly, maybe log it
-            console.error('Failed to increase view:', err);
-        });
-
-        return post;
+    if (!post) {
+      throw new AppError(
+        StatusCodes.NOT_FOUND,
+        PostKeys.POST_NOT_FOUND,
+        ErrorDetails.POST_NOT_FOUND,
+        slug,
+      );
     }
+
+    postRepository.increaseView(post.id).catch((err: unknown) => {
+      // TODO: handle error properly, maybe log it
+      console.error('Failed to increase view:', err);
+    });
+
+    return post;
+  }
 }
 
 export default new PostService();
