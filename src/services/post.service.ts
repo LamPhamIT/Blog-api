@@ -1,5 +1,5 @@
 import slugify from 'slugify';
-import { CreatePostDTO, GetPostsQueryDTO } from '../dtos/post.dto';
+import { CreatePostDTO, GetPostsQueryDTO, UpvoteResponseDto, PostDto } from '../dtos/post.dto';
 import { PostItem, PostRepository } from '../repositories/post.repository';
 import { SeriesRepository } from '../repositories/series.repository';
 import { AppError } from '../errors/app.error';
@@ -36,7 +36,27 @@ class PostService {
     return slug;
   }
 
-  async createPost(userId: string, data: CreatePostDTO): Promise<PostItem> {
+  private mapToPostDto(post: PostItem): PostDto {
+    return {
+      id: post.id,
+      title: post.title,
+      slug: post.slug,
+      thumbnail: post.thumbnail,
+      excerpt: post.excerpt,
+      content: post.content,
+      viewCount: post.viewCount,
+      published: post.published,
+      readTime: post.readTime,
+      createdAt: post.createdAt,
+      author: post.author,
+      series: post.series,
+      tags: post.tags,
+      totalUpvotes: post._count?.upvotes ?? 0,
+      isUpvoted: Array.isArray(post.upvotes) && post.upvotes.length > 0,
+    };
+  }
+
+  async createPost(userId: string, data: CreatePostDTO): Promise<PostDto> {
     if (data.tags && data.tags.length > PostConstants.MAX_TAGS_PER_POST) {
       throw new AppError(
         StatusCodes.BAD_REQUEST,
@@ -66,7 +86,8 @@ class PostService {
 
     try {
       const newPost = await postRepository.create(userId, uniqueSlug, data);
-      return newPost;
+      
+      return this.mapToPostDto(newPost);
     } catch (error) {
       if (error instanceof Prisma.PrismaClientKnownRequestError) {
         if (error.code === 'P2002') {
@@ -80,13 +101,15 @@ class PostService {
     }
   }
 
-  async getAll(query: GetPostsQueryDTO) {
-    const { posts, total } = await postRepository.findAll(query);
+  async getAll(query: GetPostsQueryDTO, currentUserId?: string) {
+    const { posts, total } = await postRepository.findAll(query, currentUserId);
+
+    const mappedPosts = posts.map((post) => this.mapToPostDto(post));
 
     const totalPages = Math.ceil(total / query.limit);
 
     return {
-      data: posts,
+      data: mappedPosts,
       meta: {
         page: query.page,
         limit: query.limit,
@@ -96,8 +119,8 @@ class PostService {
     };
   }
 
-  async getDetail(slug: string) {
-    const post = await postRepository.findBySlug(slug);
+  async getDetail(slug: string, currentUserId?: string) {
+    const post = await postRepository.findBySlug(slug, currentUserId);
 
     if (!post) {
       throw new AppError(
@@ -109,11 +132,30 @@ class PostService {
     }
 
     postRepository.increaseView(post.id).catch((err: unknown) => {
-      // TODO: handle error properly, maybe log it
       console.error('Failed to increase view:', err);
     });
 
-    return post;
+    return this.mapToPostDto(post);
+  }
+
+  async toggleUpvote(userId: string, postId: string): Promise<UpvoteResponseDto> {
+    const post = await postRepository.findById(postId);
+    
+    if (!post) {
+      throw new AppError(
+        StatusCodes.NOT_FOUND,
+        PostKeys.POST_NOT_FOUND,
+        ErrorDetails.POST_NOT_FOUND
+      );
+    }
+
+    const { isUpvoted, totalUpvotes } = await postRepository.toggleUpvote(userId, postId);
+
+    return {
+      postId,
+      isUpvoted,
+      totalUpvotes
+    };
   }
 }
 

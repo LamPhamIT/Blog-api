@@ -482,6 +482,14 @@ paths:
                         type: string
                         format: date-time
                         example: '2024-01-01T12:00:00.000Z'
+                      totalUpvotes:
+                        type: integer
+                        example: 45
+                        description: Total number of upvotes
+                      isUpvoted:
+                        type: boolean
+                        example: true
+                        description: Returns true if the current user has upvoted this post
                       author:
                         type: object
                         properties:
@@ -611,6 +619,63 @@ paths:
             application/json:
               schema:
                 $ref: '#/paths/~1posts/get/responses/500/content/application~1json/schema'
+  '/posts/{id}/upvote':
+    post:
+      summary: Toggle upvote for a post
+      description: Allows a logged-in user to upvote or remove upvote from a post.
+      tags:
+        - Posts
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: The ID of the post
+      responses:
+        '200':
+          description: Toggled successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  messageKey:
+                    type: string
+                    example: common.success
+                  message:
+                    type: string
+                    example: Operation successful.
+                  data:
+                    type: object
+                    properties:
+                      postId:
+                        type: string
+                        example: clq12345abcdef
+                      isUpvoted:
+                        type: boolean
+                        description: 'true if upvoted, false if un-upvoted'
+                        example: true
+                      totalUpvotes:
+                        type: integer
+                        example: 15
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/paths/~1posts/post/responses/401/content/application~1json/schema'
+        '404':
+          description: Post not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/paths/~1posts~1%7Bslug%7D/get/responses/404/content/application~1json/schema'
   /upload/image:
     post:
       summary: Upload an image file

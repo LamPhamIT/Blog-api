@@ -40,3 +40,42 @@ export const GetPostDetailSchema = z.object({
 });
 
 export type GetPostDetailDTO = z.infer<typeof GetPostDetailSchema>;
+
+
+export interface UpvoteResponseDto {
+  postId: string;
+  isUpvoted: boolean;
+  totalUpvotes: number;
+}
+
+export interface PostDto {
+  id: string;
+  title: string;
+  slug: string;
+  excerpt: string | null;
+  thumbnail: string | null;
+  content: string;
+  viewCount: number;
+  published: boolean;
+  readTime: number | null;
+  createdAt: Date;
+  
+  totalUpvotes: number;
+  isUpvoted: boolean;
+
+  author: {
+    id: string;
+    fullName: string | null;
+    avatarUrl: string | null;
+  };
+  series: {
+    id: number;
+    title: string;
+    slug: string;
+  } | null;
+  tags: {
+    id: number;
+    name: string;
+    slug: string;
+  }[];
+}

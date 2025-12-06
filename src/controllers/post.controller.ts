@@ -3,7 +3,7 @@ import { CreatePostDTO, GetPostsQueryDTO } from '../dtos/post.dto';
 import { successResponse } from '../utils/response.factory';
 import postService from '../services/post.service';
 import { StatusCodes } from 'http-status-codes';
-import { PostKeys } from '../constants/message-key';
+import { PostKeys } from '../constants/message-key'; // Đảm bảo import đúng key
 import { AuthenticatedRequest } from '../types/auth';
 
 class PostController {
@@ -15,6 +15,7 @@ class PostController {
     try {
       const authReq = req as AuthenticatedRequest;
       const userId = authReq.user.userId;
+      
       const post = await postService.createPost(userId, req.body);
 
       return res
@@ -28,8 +29,10 @@ class PostController {
   getAll = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const query = req.query as unknown as GetPostsQueryDTO;
+      
+      const currentUserId = req.user?.userId;
 
-      const result = await postService.getAll(query);
+      const result = await postService.getAll(query, currentUserId);
 
       return res
         .status(StatusCodes.OK)
@@ -42,12 +45,30 @@ class PostController {
   getDetail = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { slug } = req.params;
+      
+      const currentUserId = req.user?.userId;
 
-      const post = await postService.getDetail(slug);
+      const post = await postService.getDetail(slug, currentUserId);
 
       return res
         .status(StatusCodes.OK)
         .json(successResponse(PostKeys.POST_FETCH_SUCCESS, post));
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  upvote = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const authReq = req as AuthenticatedRequest;
+      const userId = authReq.user.userId;
+      const { id } = req.params;
+
+      const result = await postService.toggleUpvote(userId, id);
+
+      return res.status(StatusCodes.OK).json(
+        successResponse(PostKeys.POST_UPVOTE_SUCCESS, result)
+      );
     } catch (error) {
       next(error);
     }

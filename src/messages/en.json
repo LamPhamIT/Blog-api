@@ -14,5 +14,6 @@
   "post.create.success": "Post created successfully",
   "post.fetch.success": "Post(s) fetched successfully",
   "post.not_found": "The specified post was not found with slug: {0}",
-  "user.fetch.success": "User profile fetched successfully"
+  "user.fetch.success": "User profile fetched successfully",
+  "post.upvote.success": "Post upvote status toggled successfully"
 }

@@ -26,3 +26,27 @@ export const authenticate = (
 
   next();
 };
+
+export const authenticateOptional = (
+  req: Request,
+  _res: Response,
+  next: NextFunction
+) => {
+  const authHeader = req.headers.authorization;
+
+  if (!authHeader?.startsWith('Bearer ')) {
+    next();
+    return;
+  }
+
+  const token = authHeader.split(' ')[1];
+
+  const decoded: TokenPayload | null = accessTokenProvider.verify(token);
+
+  if (decoded) {
+    req.user = decoded;
+  }
+
+
+  next();
+};

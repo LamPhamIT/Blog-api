@@ -24,6 +24,8 @@ paths:
 
   /posts/{slug}:
     $ref: "./modules/post.yaml#/paths/~1posts~1{slug}"
+  /posts/{id}/upvote:
+    $ref: "./modules/post.yaml#/paths/~1posts~1{id}~1upvote"
 
   /upload/image:
     $ref: "./modules/upload.yaml#/paths/~1upload~1image"

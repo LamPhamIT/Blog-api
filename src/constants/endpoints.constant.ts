@@ -11,6 +11,7 @@ export const ENDPOINTS = {
     base: `${API_PREFIX}${API_VERSION}/posts`,
     root: '/',
     detail: '/:slug',
+    upvote: '/:id/upvote',
   },
   upload: {
     base: `${API_PREFIX}${API_VERSION}/upload`,
