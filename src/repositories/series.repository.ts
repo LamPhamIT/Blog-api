@@ -51,4 +51,46 @@ export class SeriesRepository {
       where: { id },
     });
   }
+
+  async findAll(skip: number, limit: number, search?: string) {
+    const where: Prisma.SeriesWhereInput = search
+      ? {
+          title: { contains: search, mode: 'insensitive' },
+        }
+      : {};
+
+    const series = await prisma.series.findMany({
+      where,
+      skip,
+      take: limit,
+      orderBy: { createdAt: 'desc' },
+      select: seriesSelect,
+    });
+
+    const total = await prisma.series.count({ where });
+
+    return { series, total };
+  }
+
+  async findBySlug(slug: string) {
+    return await prisma.series.findUnique({
+      where: { slug },
+      include: {
+        author: {
+          select: { id: true, fullName: true, avatarUrl: true },
+        },
+        posts: {
+          where: { published: true },
+          orderBy: { createdAt: 'asc' },
+          include: {
+            author: { select: { id: true, fullName: true, avatarUrl: true } },
+            tags: true,
+            series: { select: { id: true, title: true, slug: true } },
+            _count: { select: { upvotes: true } },
+            upvotes: { take: 0 },
+          },
+        },
+      },
+    });
+  }
 }

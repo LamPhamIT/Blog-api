@@ -1,28 +1,53 @@
-import { Request, Response, NextFunction } from "express";
-import { AuthenticatedRequest } from "../types/auth";
-import { CreateSeriesDTO } from "../dtos/series.dto";
-import seriesService from "../services/series.service";
-import { successResponse } from "../utils/response.factory";
-import { SeriesKeys } from "../constants/message-key";
-import { StatusCodes } from "http-status-codes";
+import { Request, Response, NextFunction } from 'express';
+import { AuthenticatedRequest } from '../types/auth';
+import { CreateSeriesDTO, GetSeriesQueryDTO } from '../dtos/series.dto';
+import seriesService from '../services/series.service';
+import { successResponse } from '../utils/response.factory';
+import { SeriesKeys } from '../constants/message-key';
+import { StatusCodes } from 'http-status-codes';
 
 class SeriesController {
-    create = async(req: Request, res: Response, next: NextFunction) => {
-        try {
-            const authReq = req as AuthenticatedRequest;
-            const userId = authReq.user.userId;
+  create = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const authReq = req as AuthenticatedRequest;
+      const userId = authReq.user.userId;
 
-            const body = req.body as CreateSeriesDTO;
-            const result = await seriesService.create(userId, body);
-        
-            return res.status(StatusCodes.CREATED).json(
-                successResponse(SeriesKeys.SERIES_CREATED, result)
-            );
+      const body = req.body as CreateSeriesDTO;
+      const result = await seriesService.create(userId, body);
 
-        } catch (error) {
-            next(error);
-        }
+      return res
+        .status(StatusCodes.CREATED)
+        .json(successResponse(SeriesKeys.SERIES_CREATED, result));
+    } catch (error) {
+      next(error);
     }
+  };
+
+  getAll = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const query = req.query as unknown as GetSeriesQueryDTO;
+      const result = await seriesService.getAll(query);
+
+      return res
+        .status(StatusCodes.OK)
+        .json(successResponse(SeriesKeys.SERIES_FETCHED, result));
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  getDetail = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { slug } = req.params;
+      const result = await seriesService.getDetail(slug);
+
+      return res
+        .status(StatusCodes.OK)
+        .json(successResponse(SeriesKeys.SERIES_FETCHED, result));
+    } catch (error) {
+      next(error);
+    }
+  };
 }
 
 export default new SeriesController();

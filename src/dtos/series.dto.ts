@@ -1,4 +1,4 @@
-import z from "zod";
+import z from 'zod';
 
 export const CreateSeriesSchema = z.object({
   title: z
@@ -28,3 +28,11 @@ export interface SeriesDto {
     posts: number;
   };
 }
+
+export const GetSeriesQuerySchema = z.object({
+  page: z.coerce.number().min(1).default(1),
+  limit: z.coerce.number().min(1).max(100).default(10),
+  search: z.string().optional(),
+});
+
+export type GetSeriesQueryDTO = z.infer<typeof GetSeriesQuerySchema>;

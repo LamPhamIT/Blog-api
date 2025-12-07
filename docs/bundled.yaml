@@ -766,6 +766,64 @@ paths:
         '500':
           description: Internal Server Error
   /series:
+    get:
+      summary: Get list of series
+      description: Retrieve a list of series with pagination and search.
+      tags:
+        - Series
+      parameters:
+        - in: query
+          name: page
+          schema:
+            type: integer
+            default: 1
+          description: Page number
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            default: 10
+          description: Number of items per page
+        - in: query
+          name: search
+          schema:
+            type: string
+          description: Search series by title
+      responses:
+        '200':
+          description: Fetch list successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  messageKey:
+                    type: string
+                    example: common.success
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/paths/~1series/post/responses/201/content/application~1json/schema/properties/data'
+                  meta:
+                    type: object
+                    properties:
+                      page:
+                        type: integer
+                        example: 1
+                      limit:
+                        type: integer
+                        example: 10
+                      total:
+                        type: integer
+                        example: 50
+                      totalPages:
+                        type: integer
+                        example: 5
+        '500':
+          description: Internal Server Error
     post:
       summary: Create a new series
       description: Create a new series collection. Requires authentication.
@@ -786,16 +844,13 @@ paths:
                   type: string
                   minLength: 5
                   maxLength: 100
-                  description: Title of the series.
                   example: Learn NestJS from Scratch
                 description:
                   type: string
-                  description: Detailed description of the series.
                   example: A complete guide to building backend applications with NestJS.
                 thumbnail:
                   type: string
                   format: uri
-                  description: URL to the thumbnail image.
                   example: 'https://res.cloudinary.com/demo/image/upload/nestjs-series.jpg'
       responses:
         '201':
@@ -829,11 +884,9 @@ paths:
                       description:
                         type: string
                         nullable: true
-                        example: A complete guide to building backend applications with NestJS.
                       thumbnail:
                         type: string
                         nullable: true
-                        example: 'https://res.cloudinary.com/demo/image/upload/nestjs-series.jpg'
                       createdAt:
                         type: string
                         format: date-time
@@ -845,10 +898,8 @@ paths:
                         properties:
                           id:
                             type: string
-                            example: clq12345abcdef
                           fullName:
                             type: string
-                            example: Nguyen Van A
                           avatarUrl:
                             type: string
                             nullable: true
@@ -857,15 +908,50 @@ paths:
                         properties:
                           posts:
                             type: integer
-                            example: 0
+                            example: 10
+                      posts:
+                        type: array
+                        nullable: true
+                        description: List of posts belonging to this series (Only available in Get Detail API)
+                        items:
+                          $ref: '#/paths/~1posts/post/responses/201/content/application~1json/schema/properties/data'
         '400':
-          description: 'Validation failed (Title too short, invalid URL...)'
+          description: Validation failed
           content:
             application/json:
               schema:
                 $ref: '#/paths/~1posts/get/responses/400/content/application~1json/schema'
         '401':
           description: Unauthorized
+        '500':
+          description: Internal Server Error
+  '/series/{slug}':
+    get:
+      summary: Get series detail
+      description: Retrieve detailed information of a series and its posts by slug.
+      tags:
+        - Series
+      parameters:
+        - in: path
+          name: slug
+          required: true
+          schema:
+            type: string
+          description: The slug of the series
+          example: learn-nestjs-from-scratch
+      responses:
+        '200':
+          description: Fetch detail successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/paths/~1series/post/responses/201/content/application~1json/schema'
+        '404':
+          description: Series not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/paths/~1posts~1%7Bslug%7D/get/responses/404/content/application~1json/schema'
         '500':
           description: Internal Server Error
 components:

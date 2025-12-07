@@ -20,6 +20,6 @@ export const ENDPOINTS = {
   series: {
     base: `${API_PREFIX}${API_VERSION}/series`,
     root: '/',
-    detail: '/:id',
-  }
+    detail: '/:slug',
+  },
 };

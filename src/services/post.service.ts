@@ -66,13 +66,10 @@ class PostService {
       data.readTime = Math.ceil(wordCount / 200) || 1;
     }
 
-    const uniqueSlug = await generateUniqueSlug(
-      data.title,
-      async (slug) => {
-        const count = await postRepository.countBySlug(slug);
-        return count > 0;
-      },
-    );
+    const uniqueSlug = await generateUniqueSlug(data.title, async (slug) => {
+      const count = await postRepository.countBySlug(slug);
+      return count > 0;
+    });
 
     try {
       const newPost = await postRepository.create(
@@ -126,7 +123,9 @@ class PostService {
       );
     }
 
-    postRepository.increaseView(post.id).catch(() => { /* empty */ });
+    postRepository.increaseView(post.id).catch(() => {
+      /* empty */
+    });
 
     return PostMapper.toDto(post);
   }

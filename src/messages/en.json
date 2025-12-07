@@ -19,5 +19,6 @@
   "series.not_found": "The specified series was not found with id: {0}",
   "series.create.success": "Series created successfully",
   "series.update.success": "Series updated successfully",
-  "series.delete.success": "Series deleted successfully"
+  "series.delete.success": "Series deleted successfully",
+  "series.fetch.success": "Series fetched successfully"
 }
