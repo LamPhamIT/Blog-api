@@ -22,5 +22,5 @@ export const PostMapper = {
       totalUpvotes: post._count?.upvotes ?? 0,
       isUpvoted: Array.isArray(post.upvotes) && post.upvotes.length > 0,
     };
-  }
+  },
 };

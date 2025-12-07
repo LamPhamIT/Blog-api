@@ -17,4 +17,9 @@ export const ENDPOINTS = {
     base: `${API_PREFIX}${API_VERSION}/upload`,
     image: '/image',
   },
+  series: {
+    base: `${API_PREFIX}${API_VERSION}/series`,
+    root: '/',
+    detail: '/:id',
+  }
 };

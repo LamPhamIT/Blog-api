@@ -30,6 +30,10 @@ paths:
   /upload/image:
     $ref: "./modules/upload.yaml#/paths/~1upload~1image"
 
+  # Series Module
+  /series:
+    $ref: "./modules/series.yaml#/paths/~1series"
+
   
 
   

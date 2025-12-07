@@ -1,4 +1,3 @@
-import slugify from 'slugify';
 import {
   CreatePostDTO,
   GetPostsQueryDTO,
@@ -16,33 +15,12 @@ import { formatString } from '../utils/string.util';
 import { Prisma } from '@prisma/client';
 import { PostMapper } from '../mappers/post.mapper';
 import { PostContentUtil } from '../utils/post-content.util';
+import { generateUniqueSlug } from '../utils/slug.util';
 
 const postRepository = new PostRepository();
 const seriesRepository = new SeriesRepository();
 
 class PostService {
-  private async generateUniqueSlug(title: string): Promise<string> {
-    let originalSlug = slugify(title, {
-      lower: true,
-      strict: true,
-      locale: 'vi',
-      trim: true,
-    });
-    if (!originalSlug) {
-      originalSlug = `post-${Date.now().toString()}`;
-    }
-
-    let slug = originalSlug;
-    let count = 1;
-
-    while ((await postRepository.countBySlug(slug)) > 0) {
-      slug = `${originalSlug}-${count.toString()}`;
-      count++;
-    }
-
-    return slug;
-  }
-
   async createPost(userId: string, data: CreatePostDTO): Promise<PostDto> {
     if (data.tags && data.tags.length > PostConstants.MAX_TAGS_PER_POST) {
       throw new AppError(
@@ -88,7 +66,13 @@ class PostService {
       data.readTime = Math.ceil(wordCount / 200) || 1;
     }
 
-    const uniqueSlug = await this.generateUniqueSlug(data.title);
+    const uniqueSlug = await generateUniqueSlug(
+      data.title,
+      async (slug) => {
+        const count = await postRepository.countBySlug(slug);
+        return count > 0;
+      },
+    );
 
     try {
       const newPost = await postRepository.create(

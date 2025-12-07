@@ -1,0 +1,118 @@
+paths:
+  /series:
+    post:
+      summary: Create a new series
+      description: Create a new series collection. Requires authentication.
+      tags:
+        - Series
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateSeriesRequest"
+      responses:
+        "201":
+          description: Series created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SeriesResponse"
+        "400":
+          description: Validation failed (Title too short, invalid URL...)
+          content:
+            application/json:
+              schema:
+                $ref: "../common/error.yaml#/ValidationErrorResponse"
+        "401":
+          description: Unauthorized
+        "500":
+          description: Internal Server Error
+
+components:
+  schemas:
+    # --- REQUEST BODY ---
+    CreateSeriesRequest:
+      type: object
+      required:
+        - title
+      properties:
+        title:
+          type: string
+          minLength: 5
+          maxLength: 100
+          description: Title of the series.
+          example: "Learn NestJS from Scratch"
+        description:
+          type: string
+          description: Detailed description of the series.
+          example: "A complete guide to building backend applications with NestJS."
+        thumbnail:
+          type: string
+          format: uri
+          description: URL to the thumbnail image.
+          example: "https://res.cloudinary.com/demo/image/upload/nestjs-series.jpg"
+
+    # --- RESPONSE WRAPPER ---
+    SeriesResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        messageKey:
+          type: string
+          example: common.success
+        message:
+          type: string
+          example: Operation successful.
+        data:
+          $ref: "#/components/schemas/SeriesDto"
+
+    # --- DATA OBJECT ---
+    SeriesDto:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        title:
+          type: string
+          example: "Learn NestJS from Scratch"
+        slug:
+          type: string
+          example: "learn-nestjs-from-scratch"
+        description:
+          type: string
+          nullable: true
+          example: "A complete guide to building backend applications with NestJS."
+        thumbnail:
+          type: string
+          nullable: true
+          example: "https://res.cloudinary.com/demo/image/upload/nestjs-series.jpg"
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        author:
+          type: object
+          properties:
+            id:
+              type: string
+              example: "clq12345abcdef"
+            fullName:
+              type: string
+              example: "Nguyen Van A"
+            avatarUrl:
+              type: string
+              nullable: true
+        _count:
+          type: object
+          properties:
+            posts:
+              type: integer
+              example: 0

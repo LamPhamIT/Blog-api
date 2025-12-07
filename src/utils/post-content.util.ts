@@ -39,7 +39,7 @@ export const PostContentUtil = {
               : (content as Record<string, string>).html || '';
 
           return sanitizeHtml(rawHtml, {
-            allowedTags: (sanitizeHtml.defaults.allowedTags).concat([
+            allowedTags: sanitizeHtml.defaults.allowedTags.concat([
               'img',
               'h1',
               'h2',
@@ -62,10 +62,7 @@ export const PostContentUtil = {
     }
   },
 
-  extractPlainText(
-    type: PostContentType,
-    content: Prisma.JsonValue,
-  ): string {
+  extractPlainText(type: PostContentType, content: Prisma.JsonValue): string {
     try {
       if (type === PostContentType.QUILL_DELTA) {
         const delta = content as unknown as QuillDelta;
@@ -83,5 +80,5 @@ export const PostContentUtil = {
     } catch {
       return '';
     }
-  }
+  },
 };

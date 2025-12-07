@@ -15,5 +15,9 @@
   "post.fetch.success": "Post(s) fetched successfully",
   "post.not_found": "The specified post was not found with slug: {0}",
   "user.fetch.success": "User profile fetched successfully",
-  "post.upvote.success": "Post upvote status toggled successfully"
+  "post.upvote.success": "Post upvote status toggled successfully",
+  "series.not_found": "The specified series was not found with id: {0}",
+  "series.create.success": "Series created successfully",
+  "series.update.success": "Series updated successfully",
+  "series.delete.success": "Series deleted successfully"
 }
