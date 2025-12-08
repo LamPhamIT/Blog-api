@@ -22,4 +22,8 @@ export const ENDPOINTS = {
     root: '/',
     detail: '/:slug',
   },
+  comment: {
+    base: `${API_PREFIX}${API_VERSION}/comments`,
+    root: '/',
+  }
 };

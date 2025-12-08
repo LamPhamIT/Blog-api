@@ -36,6 +36,10 @@ paths:
   /series/{slug}:
     $ref: "./modules/series.yaml#/paths/~1series~1{slug}"
 
+  # Comment Module
+  /comments:
+    $ref: "./modules/comment.yaml#/paths/~1comments"
+
 components:
   securitySchemes:
     bearerAuth:

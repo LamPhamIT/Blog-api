@@ -1,0 +1,5 @@
+export const CommentKeys = {
+    COMMENT_NOT_FOUND: 'comment.not_found',
+    INVALID_PARENT: 'comment.invalid_parent',
+    COMMENT_CREATED: 'comment.create.success',
+};

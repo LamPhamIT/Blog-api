@@ -27,10 +27,11 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  roles  UserRole[]
-  Series Series[]
-  Post   Post[]
-  Upvote Upvote[]
+  roles    UserRole[]
+  Series   Series[]
+  Post     Post[]
+  Upvote   Upvote[]
+  comments Comment[]
 }
 
 model Role {
@@ -86,22 +87,25 @@ model Series {
 }
 
 enum PostContentType {
-  QUILL_DELTA  
-  MARKDOWN    
-  HTML_RAW    
+  QUILL_DELTA
+  MARKDOWN
+  HTML_RAW
 }
+
 model Post {
-  id        String  @id @default(cuid())
-  title     String
-  slug      String  @unique
+  id    String @id @default(cuid())
+  title String
+  slug  String @unique
 
   contentType PostContentType @default(QUILL_DELTA)
 
   content     Json
-  contentHtml String?  @db.Text
+  contentHtml String? @db.Text
 
   excerpt   String? @db.Text
   thumbnail String?
+  
+  order     Int     @default(0)
 
   published Boolean @default(true)
   viewCount Int     @default(0)
@@ -117,10 +121,11 @@ model Post {
   author  User     @relation(fields: [authorId], references: [id])
   series  Series?  @relation(fields: [seriesId], references: [id])
   upvotes Upvote[]
-  tags      Tag[]
+  tags    Tag[]
+  comments Comment[]
 
   @@index([authorId])
-  @@index([seriesId])
+  @@index([seriesId, order])
   @@index([published, createdAt(sort: Desc)])
 }
 
@@ -140,10 +145,31 @@ model Upvote {
 model Tag {
   id          Int      @id @default(autoincrement())
   name        String   @unique
-  slug        String  
+  slug        String
   description String?
-  
-  posts       Post[]  
-  
-  createdAt   DateTime @default(now())
+
+  posts Post[]
+
+  createdAt DateTime @default(now())
+}
+
+model Comment {
+  id      String @id @default(cuid())
+  content String @db.Text
+
+  postId String
+  post   Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  parentId String?
+  parent   Comment?  @relation("CommentReplies", fields: [parentId], references: [id], onDelete: Cascade)
+  children Comment[] @relation("CommentReplies")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([postId])
+  @@index([parentId]) 
 }

@@ -62,6 +62,14 @@ export const ErrorDetails: Record<string, ErrorDetail> = {
     code: 'POST_NOT_FOUND',
     detail: 'The specified post was not found.',
   },
+  COMMENT_NOT_FOUND: {
+    code: 'COMMENT_NOT_FOUND',
+    detail: 'The specified comment was not found.',
+  },
+  INVALID_PARENT: {
+    code: 'INVALID_PARENT',
+    detail: 'The specified parent comment is invalid for this post.',
+  },
 };
 
 export type ErrorDetailKey = keyof typeof ErrorDetails;

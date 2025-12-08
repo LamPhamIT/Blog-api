@@ -622,20 +622,7 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                    example: false
-                  messageKey:
-                    type: string
-                    example: not.found
-                  message:
-                    type: string
-                    example: The requested resource was not found.
-                  errors:
-                    type: array
-                    example: []
+                $ref: '#/paths/~1comments/post/responses/404/content/application~1json/schema'
         '500':
           description: Internal Server Error
           content:
@@ -698,7 +685,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/paths/~1posts~1%7Bslug%7D/get/responses/404/content/application~1json/schema'
+                $ref: '#/paths/~1comments/post/responses/404/content/application~1json/schema'
   /upload/image:
     post:
       summary: Upload an image file
@@ -951,7 +938,123 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/paths/~1posts~1%7Bslug%7D/get/responses/404/content/application~1json/schema'
+                $ref: '#/paths/~1comments/post/responses/404/content/application~1json/schema'
+        '500':
+          description: Internal Server Error
+  /comments:
+    post:
+      summary: Create a new comment
+      description: Create a new comment or reply (2-level nesting). Requires authentication.
+      tags:
+        - Comments
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - content
+                - postId
+              properties:
+                content:
+                  type: string
+                  minLength: 1
+                  maxLength: 1000
+                  description: Content of the comment.
+                  example: This is a great article!
+                postId:
+                  type: string
+                  format: uuid
+                  description: ID of the post.
+                  example: clq12345abcdef
+                parentId:
+                  type: string
+                  nullable: true
+                  format: uuid
+                  description: ID of the parent comment (if replying). System automatically handles 2-level nesting.
+                  example: clq98765zyxwvu
+      responses:
+        '201':
+          description: Comment created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  messageKey:
+                    type: string
+                    example: common.success
+                  message:
+                    type: string
+                    example: Operation successful.
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        example: clq98765zyxwvu
+                      content:
+                        type: string
+                        example: This is a great article!
+                      postId:
+                        type: string
+                        example: clq12345abcdef
+                      parentId:
+                        type: string
+                        nullable: true
+                        example: null
+                      createdAt:
+                        type: string
+                        format: date-time
+                      updatedAt:
+                        type: string
+                        format: date-time
+                      user:
+                        type: object
+                        properties:
+                          id:
+                            type: string
+                            example: user_123
+                          fullName:
+                            type: string
+                            example: Nguyen Van A
+                          avatarUrl:
+                            type: string
+                            nullable: true
+                            example: 'https://example.com/avatar.jpg'
+        '400':
+          description: 'Validation failed (Parent not found, Parent belongs to other post...)'
+          content:
+            application/json:
+              schema:
+                $ref: '#/paths/~1posts/get/responses/400/content/application~1json/schema'
+        '401':
+          description: Unauthorized
+        '404':
+          description: Post not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  messageKey:
+                    type: string
+                    example: not.found
+                  message:
+                    type: string
+                    example: The requested resource was not found.
+                  errors:
+                    type: array
+                    example: []
         '500':
           description: Internal Server Error
 components:

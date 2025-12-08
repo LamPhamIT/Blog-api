@@ -20,5 +20,8 @@
   "series.create.success": "Series created successfully",
   "series.update.success": "Series updated successfully",
   "series.delete.success": "Series deleted successfully",
-  "series.fetch.success": "Series fetched successfully"
+  "series.fetch.success": "Series fetched successfully",
+  "comment.not_found": "The specified comment was not found with id: {0}",
+  "comment.invalid_parent": "The specified parent comment is invalid for this post.",
+  "comment.create.success": "Comment created successfully"
 }
