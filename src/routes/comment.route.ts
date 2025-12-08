@@ -2,7 +2,10 @@ import { Router } from 'express';
 import { authenticate } from '../middleware/auth.middleware';
 import { validate } from '../middleware/validation.middleware';
 import commentController from '../controllers/comment.controller';
-import { CreateCommentSchema } from '../dtos/comment.dto';
+import {
+  CreateCommentSchema,
+  GetCommentsQuerySchema,
+} from '../dtos/comment.dto';
 import { ValidationTarget } from '../constants/validation.constant';
 import { ENDPOINTS } from '../constants/endpoints.constant';
 
@@ -13,6 +16,12 @@ router.post(
   authenticate,
   validate(CreateCommentSchema, ValidationTarget.BODY),
   commentController.create,
+);
+
+router.get(
+  ENDPOINTS.comment.root,
+  validate(GetCommentsQuerySchema, ValidationTarget.QUERY),
+  commentController.getAll,
 );
 
 export default router;

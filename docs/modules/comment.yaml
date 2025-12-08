@@ -1,5 +1,46 @@
 paths:
   /comments:
+    get:
+      summary: Get list of comments
+      description: Retrieve a list of root comments for a specific post with nested replies.
+      tags:
+        - Comments
+      parameters:
+        - in: query
+          name: postId
+          required: true
+          schema:
+            type: string
+          description: The ID of the post
+        - in: query
+          name: page
+          schema:
+            type: integer
+            default: 1
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            default: 10
+      responses:
+        "200":
+          description: Fetch list successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CommentListResponse"
+        "400":
+          description: Validation failed (Missing postId)
+          content:
+            application/json:
+              schema:
+                $ref: "../common/error.yaml#/ValidationErrorResponse"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "../common/error.yaml#/InternalServerErrorResponse"
     post:
       summary: Create a new comment
       description: Create a new comment or reply (2-level nesting). Requires authentication.
@@ -116,3 +157,36 @@ components:
               type: string
               nullable: true
               example: "https://example.com/avatar.jpg"
+        children:
+          type: array
+          items:
+            $ref: "#/components/schemas/CommentDto"
+        _count:
+          type: object
+          properties:
+            children:
+              type: integer
+    CommentListResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        messageKey:
+          type: string
+          example: common.success
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/CommentDto"
+        meta:
+          type: object
+          properties:
+            page:
+              type: integer
+            limit:
+              type: integer
+            total:
+              type: integer
+            totalPages:
+              type: integer

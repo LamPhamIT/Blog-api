@@ -942,6 +942,69 @@ paths:
         '500':
           description: Internal Server Error
   /comments:
+    get:
+      summary: Get list of comments
+      description: Retrieve a list of root comments for a specific post with nested replies.
+      tags:
+        - Comments
+      parameters:
+        - in: query
+          name: postId
+          required: true
+          schema:
+            type: string
+          description: The ID of the post
+        - in: query
+          name: page
+          schema:
+            type: integer
+            default: 1
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            default: 10
+      responses:
+        '200':
+          description: Fetch list successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  messageKey:
+                    type: string
+                    example: common.success
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/paths/~1comments/post/responses/201/content/application~1json/schema/properties/data'
+                  meta:
+                    type: object
+                    properties:
+                      page:
+                        type: integer
+                      limit:
+                        type: integer
+                      total:
+                        type: integer
+                      totalPages:
+                        type: integer
+        '400':
+          description: Validation failed (Missing postId)
+          content:
+            application/json:
+              schema:
+                $ref: '#/paths/~1posts/get/responses/400/content/application~1json/schema'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/paths/~1posts/get/responses/500/content/application~1json/schema'
     post:
       summary: Create a new comment
       description: Create a new comment or reply (2-level nesting). Requires authentication.
@@ -1028,6 +1091,15 @@ paths:
                             type: string
                             nullable: true
                             example: 'https://example.com/avatar.jpg'
+                      children:
+                        type: array
+                        items:
+                          $ref: '#/paths/~1comments/post/responses/201/content/application~1json/schema/properties/data'
+                      _count:
+                        type: object
+                        properties:
+                          children:
+                            type: integer
         '400':
           description: 'Validation failed (Parent not found, Parent belongs to other post...)'
           content:

@@ -1,6 +1,6 @@
 import { CommentRepository } from '../repositories/comment.repository';
 import { PostRepository } from '../repositories/post.repository';
-import { CreateCommentDTO } from '../dtos/comment.dto';
+import { CreateCommentDTO, GetCommentsQueryDTO } from '../dtos/comment.dto';
 import { AppError } from '../errors/app.error';
 import { StatusCodes } from 'http-status-codes';
 import { CommentKeys, CommonKeys } from '../constants/message-key';
@@ -26,8 +26,10 @@ class CommentService {
       const parentComment = await commentRepository.findById(finalParentId);
 
       if (!parentComment) {
-        throw new AppError(StatusCodes.NOT_FOUND, CommentKeys.COMMENT_NOT_FOUND, 
-            ErrorDetails.COMMENT_NOT_FOUND
+        throw new AppError(
+          StatusCodes.NOT_FOUND,
+          CommentKeys.COMMENT_NOT_FOUND,
+          ErrorDetails.COMMENT_NOT_FOUND,
         );
       }
 
@@ -48,6 +50,21 @@ class CommentService {
       ...data,
       parentId: finalParentId,
     });
+  }
+
+  async getAll(query: GetCommentsQueryDTO) {
+    const { comments, total } = await commentRepository.findAll(query);
+    const totalPages = Math.ceil(total / query.limit);
+
+    return {
+      data: comments,
+      meta: {
+        page: query.page,
+        limit: query.limit,
+        total,
+        totalPages,
+      },
+    };
   }
 }
 
