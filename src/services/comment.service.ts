@@ -1,6 +1,10 @@
 import { CommentRepository } from '../repositories/comment.repository';
 import { PostRepository } from '../repositories/post.repository';
-import { CreateCommentDTO, GetCommentsQueryDTO } from '../dtos/comment.dto';
+import {
+  CreateCommentDTO,
+  GetCommentsQueryDTO,
+  UpdateCommentDTO,
+} from '../dtos/comment.dto';
 import { AppError } from '../errors/app.error';
 import { StatusCodes } from 'http-status-codes';
 import { CommentKeys, CommonKeys } from '../constants/message-key';
@@ -65,6 +69,29 @@ class CommentService {
         totalPages,
       },
     };
+  }
+
+  async update(id: string, userId: string, data: UpdateCommentDTO) {
+    const comment = await commentRepository.findById(id);
+
+    if (!comment) {
+      throw new AppError(
+        StatusCodes.NOT_FOUND,
+        CommentKeys.COMMENT_NOT_FOUND,
+        ErrorDetails.COMMENT_NOT_FOUND,
+        id,
+      );
+    }
+
+    if (comment.userId !== userId) {
+      throw new AppError(
+        StatusCodes.FORBIDDEN,
+        CommonKeys.FORBIDDEN_ACCESS,
+        ErrorDetails.FORBIDDEN_ACCESS,
+      );
+    }
+
+    return await commentRepository.update(id, data.content);
   }
 }
 

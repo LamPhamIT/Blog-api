@@ -1,6 +1,10 @@
 import { NextFunction, Request, Response } from 'express';
 import { AuthenticatedRequest } from '../types/auth';
-import { CreateCommentDTO, GetCommentsQueryDTO } from '../dtos/comment.dto';
+import {
+  CreateCommentDTO,
+  GetCommentsQueryDTO,
+  UpdateCommentDTO,
+} from '../dtos/comment.dto';
 import commentService from '../services/comment.service';
 import { successResponse } from '../utils/response.factory';
 import { CommentKeys } from '../constants/message-key';
@@ -31,6 +35,22 @@ class CommentController {
       return res
         .status(StatusCodes.OK)
         .json(successResponse(CommentKeys.COMMENT_FETCHED, result));
+    } catch (error) {
+      next(error);
+    }
+  };
+  update = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const authReq = req as AuthenticatedRequest;
+      const userId = authReq.user.userId;
+      const { id } = req.params;
+      const body = req.body as UpdateCommentDTO;
+
+      const result = await commentService.update(id, userId, body);
+
+      return res
+        .status(StatusCodes.OK)
+        .json(successResponse(CommentKeys.COMMENT_UPDATED, result));
     } catch (error) {
       next(error);
     }

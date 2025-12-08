@@ -24,5 +24,6 @@
   "comment.not_found": "The specified comment was not found with id: {0}",
   "comment.invalid_parent": "The specified parent comment is invalid for this post.",
   "comment.create.success": "Comment created successfully",
-  "comment.fetch.success": "Comment(s) fetched successfully"
+  "comment.fetch.success": "Comment(s) fetched successfully",
+  "comment.update.success": "Comment updated successfully"
 }

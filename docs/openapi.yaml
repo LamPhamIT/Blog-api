@@ -39,6 +39,8 @@ paths:
   # Comment Module
   /comments:
     $ref: "./modules/comment.yaml#/paths/~1comments"
+  /comments/{id}:
+    $ref: "./modules/comment.yaml#/paths/~1comments~1{id}"
 
 components:
   securitySchemes:

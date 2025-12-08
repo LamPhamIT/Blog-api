@@ -5,6 +5,7 @@ import commentController from '../controllers/comment.controller';
 import {
   CreateCommentSchema,
   GetCommentsQuerySchema,
+  UpdateCommentSchema,
 } from '../dtos/comment.dto';
 import { ValidationTarget } from '../constants/validation.constant';
 import { ENDPOINTS } from '../constants/endpoints.constant';
@@ -22,6 +23,13 @@ router.get(
   ENDPOINTS.comment.root,
   validate(GetCommentsQuerySchema, ValidationTarget.QUERY),
   commentController.getAll,
+);
+
+router.patch(
+  ENDPOINTS.comment.id,
+  authenticate,
+  validate(UpdateCommentSchema, ValidationTarget.BODY),
+  commentController.update,
 );
 
 export default router;

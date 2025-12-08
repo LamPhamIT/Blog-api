@@ -25,5 +25,6 @@ export const ENDPOINTS = {
   comment: {
     base: `${API_PREFIX}${API_VERSION}/comments`,
     root: '/',
+    id: '/:id',
   },
 };

@@ -47,3 +47,9 @@ export interface CommentDto {
     children: number;
   };
 }
+
+export const UpdateCommentSchema = z.object({
+  content: z.string().min(1, 'Content cannot be empty').max(2000),
+});
+
+export type UpdateCommentDTO = z.infer<typeof UpdateCommentSchema>;

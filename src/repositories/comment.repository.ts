@@ -65,4 +65,20 @@ export class CommentRepository {
 
     return { comments, total };
   }
+
+  async update(id: string, content: string) {
+    return await prisma.comment.update({
+      where: { id },
+      data: { content },
+      include: {
+        user: {
+          select: {
+            id: true,
+            fullName: true,
+            avatarUrl: true,
+          },
+        },
+      },
+    });
+  }
 }

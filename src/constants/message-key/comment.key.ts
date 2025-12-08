@@ -3,4 +3,5 @@ export const CommentKeys = {
   INVALID_PARENT: 'comment.invalid_parent',
   COMMENT_CREATED: 'comment.create.success',
   COMMENT_FETCHED: 'comment.fetch.success',
+  COMMENT_UPDATED: 'comment.update.success',
 };
