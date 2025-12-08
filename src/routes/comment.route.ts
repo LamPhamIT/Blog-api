@@ -32,4 +32,6 @@ router.patch(
   commentController.update,
 );
 
+router.delete(ENDPOINTS.comment.id, authenticate, commentController.delete);
+
 export default router;

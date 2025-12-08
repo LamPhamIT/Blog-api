@@ -55,6 +55,22 @@ class CommentController {
       next(error);
     }
   };
+
+  delete = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const authReq = req as AuthenticatedRequest;
+      const userId = authReq.user.userId;
+      const { id } = req.params;
+
+      await commentService.delete(id, userId);
+
+      return res
+        .status(StatusCodes.OK)
+        .json(successResponse(CommentKeys.COMMENT_DELETED, null));
+    } catch (error) {
+      next(error);
+    }
+  };
 }
 
 export default new CommentController();

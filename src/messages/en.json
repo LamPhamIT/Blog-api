@@ -25,5 +25,6 @@
   "comment.invalid_parent": "The specified parent comment is invalid for this post.",
   "comment.create.success": "Comment created successfully",
   "comment.fetch.success": "Comment(s) fetched successfully",
-  "comment.update.success": "Comment updated successfully"
+  "comment.update.success": "Comment updated successfully",
+  "comment.delete.success": "Comment deleted successfully"
 }

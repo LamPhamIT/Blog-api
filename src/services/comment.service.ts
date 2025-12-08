@@ -93,6 +93,30 @@ class CommentService {
 
     return await commentRepository.update(id, data.content);
   }
+
+  async delete(id: string, userId: string) {
+    const comment = await commentRepository.findById(id);
+
+    if (!comment) {
+      throw new AppError(
+        StatusCodes.NOT_FOUND,
+        CommentKeys.COMMENT_NOT_FOUND,
+        ErrorDetails.COMMENT_NOT_FOUND,
+        id,
+      );
+    }
+
+    if (comment.userId !== userId) {
+      throw new AppError(
+        StatusCodes.FORBIDDEN,
+        CommonKeys.FORBIDDEN_ACCESS,
+        ErrorDetails.FORBIDDEN_ACCESS,
+      );
+    }
+
+    await commentRepository.delete(id);
+    return true;
+  }
 }
 
 export default new CommentService();

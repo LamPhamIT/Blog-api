@@ -123,6 +123,47 @@ paths:
             application/json:
               schema:
                 $ref: "../common/error.yaml#/NotFoundErrorResponse"
+    delete:
+      summary: Delete a comment
+      description: Delete a comment. Only the author can delete. All nested replies will be deleted automatically (Cascade).
+      tags:
+        - Comments
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: The ID of the comment
+      responses:
+        "200":
+          description: Delete successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CommentResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "../common/error.yaml#/UnauthorizedErrorResponse"
+        "403":
+          description: Forbidden (Not the author)
+        "404":
+          description: Comment not found
+          content:
+            application/json:
+              schema:
+                $ref: "../common/error.yaml#/NotFoundErrorResponse"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "../common/error.yaml#/InternalServerErrorResponse"
 components:
   schemas:
     # --- REQUEST BODY ---

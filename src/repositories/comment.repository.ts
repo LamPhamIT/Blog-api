@@ -81,4 +81,10 @@ export class CommentRepository {
       },
     });
   }
+
+  async delete(id: string) {
+    return await prisma.comment.delete({
+      where: { id },
+    });
+  }
 }

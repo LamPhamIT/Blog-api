@@ -4,4 +4,5 @@ export const CommentKeys = {
   COMMENT_CREATED: 'comment.create.success',
   COMMENT_FETCHED: 'comment.fetch.success',
   COMMENT_UPDATED: 'comment.update.success',
+  COMMENT_DELETED: 'comment.delete.success',
 };
