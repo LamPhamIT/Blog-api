@@ -94,6 +94,150 @@ paths:
         "500":
           description: Internal Server Error
 
+  /series/{id}:
+    patch:
+      summary: Update a series
+      description: Update series information. Only the author can update.
+      tags:
+        - Series
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: The ID of the series
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateSeriesRequest"
+      responses:
+        "200":
+          description: Update successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SeriesResponse"
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+        "404":
+          description: Series not found
+        "500":
+          description: Internal Server Error
+
+    delete:
+      summary: Delete a series
+      description: Delete a series. Only the author can delete.
+      tags:
+        - Series
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: The ID of the series
+      responses:
+        "200":
+          description: Delete successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SeriesResponse"
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+        "404":
+          description: Series not found
+        "500":
+          description: Internal Server Error
+
+  /series/{id}/posts:
+    patch:
+      summary: Add posts to series
+      description: Add existing posts to a series. Posts will be automatically ordered at the end of the list.
+      tags:
+        - Series
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: The ID of the series
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AddPostsToSeriesRequest"
+      responses:
+        "200":
+          description: Operation successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+        "404":
+          description: Series not found
+
+    delete:
+      summary: Remove posts from series
+      description: Remove posts from a series.
+      tags:
+        - Series
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: The ID of the series
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RemovePostsFromSeriesRequest"
+      responses:
+        "200":
+          description: Operation successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+        "404":
+          description: Series not found
+
 components:
   schemas:
     CreateSeriesRequest:
@@ -113,6 +257,50 @@ components:
           type: string
           format: uri
           example: "https://res.cloudinary.com/demo/image/upload/nestjs-series.jpg"
+        postIds:
+          type: array
+          items:
+            type: string
+            format: uuid
+          description: List of post IDs to add to the series immediately.
+          example: ["clq12345abcdef", "clq67890ghijk"]
+
+    UpdateSeriesRequest:
+      type: object
+      properties:
+        title:
+          type: string
+          minLength: 5
+          maxLength: 100
+        description:
+          type: string
+        thumbnail:
+          type: string
+          format: uri
+
+    AddPostsToSeriesRequest:
+      type: object
+      required:
+        - postIds
+      properties:
+        postIds:
+          type: array
+          items:
+            type: string
+            format: uuid
+          example: ["clq12345abcdef", "clq67890ghijk"]
+
+    RemovePostsFromSeriesRequest:
+      type: object
+      required:
+        - postIds
+      properties:
+        postIds:
+          type: array
+          items:
+            type: string
+            format: uuid
+          example: ["clq12345abcdef"]
 
     SeriesResponse:
       type: object
@@ -129,7 +317,6 @@ components:
         data:
           $ref: "#/components/schemas/SeriesDto"
 
-    # Response cho danh sách (List + Meta)
     SeriesListResponse:
       type: object
       properties:
@@ -199,7 +386,6 @@ components:
             posts:
               type: integer
               example: 10
-        
         posts:
           type: array
           nullable: true

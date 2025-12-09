@@ -16,6 +16,7 @@ export interface PostItem {
   createdAt: Date;
   viewCount: number;
   readTime: number | null;
+  order: number;
   author: {
     id: string;
     fullName: string | null;
@@ -52,6 +53,7 @@ export class PostRepository {
       createdAt: true,
       viewCount: true,
       readTime: true,
+      order: true,
       author: {
         select: {
           id: true,
@@ -92,6 +94,7 @@ export class PostRepository {
     slug: string,
     data: CreatePostDTO,
     htmlContent: string,
+    order = 0,
   ): Promise<PostItem> {
     const tagsConnect = data.tags?.map((tagName) => {
       return {
@@ -116,6 +119,7 @@ export class PostRepository {
         thumbnail: data.thumbnail,
         published: data.published,
         readTime: data.readTime,
+        order: order,
         author: {
           connect: { id: userId },
         },

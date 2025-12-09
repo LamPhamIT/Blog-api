@@ -62,7 +62,7 @@ export interface PostDto {
   published: boolean;
   readTime: number | null;
   createdAt: Date;
-
+  order: number;
   totalUpvotes: number;
   isUpvoted: boolean;
 

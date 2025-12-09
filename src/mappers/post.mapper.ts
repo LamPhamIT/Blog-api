@@ -16,6 +16,7 @@ export const PostMapper = {
       published: post.published,
       readTime: post.readTime,
       createdAt: post.createdAt,
+      order: post.order,
       author: post.author,
       series: post.series,
       tags: post.tags,

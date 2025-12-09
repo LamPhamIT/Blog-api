@@ -35,6 +35,10 @@ paths:
     $ref: "./modules/series.yaml#/paths/~1series"
   /series/{slug}:
     $ref: "./modules/series.yaml#/paths/~1series~1{slug}"
+  /series/{id}:
+    $ref: "./modules/series.yaml#/paths/~1series~1{id}"
+  /series/{id}/posts:
+    $ref: "./modules/series.yaml#/paths/~1series~1{id}~1posts"
 
   # Comment Module
   /comments:

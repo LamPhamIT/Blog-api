@@ -21,6 +21,8 @@ export const ENDPOINTS = {
     base: `${API_PREFIX}${API_VERSION}/series`,
     root: '/',
     detail: '/:slug',
+    id: '/:id',
+    posts: '/:id/posts',
   },
   comment: {
     base: `${API_PREFIX}${API_VERSION}/comments`,

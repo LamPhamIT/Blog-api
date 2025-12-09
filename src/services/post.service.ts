@@ -36,6 +36,8 @@ class PostService {
       );
     }
 
+    let nextOrder = 0;
+
     if (data.seriesId) {
       const series = await seriesRepository.findById(data.seriesId);
 
@@ -46,6 +48,9 @@ class PostService {
           ErrorDetails.SERIES_NOT_FOUND,
         );
       }
+
+      const currentMaxOrder = await seriesRepository.getMaxOrder(data.seriesId);
+      nextOrder = currentMaxOrder + 1;
     }
 
     const safeContent = data.content as Prisma.JsonValue;
@@ -77,6 +82,7 @@ class PostService {
         uniqueSlug,
         data,
         htmlContent,
+        nextOrder,
       );
 
       return PostMapper.toDto(newPost);

@@ -1,5 +1,5 @@
 import { prisma } from '../prisma/client';
-import { CreateSeriesDTO } from '../dtos/series.dto';
+import { CreateSeriesDTO, UpdateSeriesDTO } from '../dtos/series.dto';
 import { Prisma } from '@prisma/client';
 
 export const seriesSelect = {
@@ -81,7 +81,7 @@ export class SeriesRepository {
         },
         posts: {
           where: { published: true },
-          orderBy: { createdAt: 'asc' },
+          orderBy: [{ order: 'asc' }, { createdAt: 'asc' }],
           include: {
             author: { select: { id: true, fullName: true, avatarUrl: true } },
             tags: true,
@@ -90,6 +90,56 @@ export class SeriesRepository {
             upvotes: { take: 0 },
           },
         },
+      },
+    });
+  }
+
+  async update(id: number, data: UpdateSeriesDTO) {
+    return await prisma.series.update({
+      where: { id },
+      data,
+      select: seriesSelect,
+    });
+  }
+
+  async delete(id: number) {
+    return await prisma.series.delete({
+      where: { id },
+    });
+  }
+
+  async getMaxOrder(seriesId: number): Promise<number> {
+    const lastPost = await prisma.post.findFirst({
+      where: { seriesId },
+      orderBy: { order: 'desc' },
+      select: { order: true },
+    });
+    return lastPost?.order ?? 0;
+  }
+
+  async addPosts(seriesId: number, postIds: string[], startOrder: number) {
+    return await prisma.$transaction(
+      postIds.map((postId, index) => {
+        return prisma.post.update({
+          where: { id: postId },
+          data: {
+            seriesId: seriesId,
+            order: startOrder + index + 1,
+          },
+        });
+      }),
+    );
+  }
+
+  async removePosts(seriesId: number, postIds: string[]) {
+    return await prisma.post.updateMany({
+      where: {
+        id: { in: postIds },
+        seriesId: seriesId,
+      },
+      data: {
+        seriesId: null,
+        order: 0,
       },
     });
   }

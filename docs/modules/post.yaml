@@ -298,6 +298,10 @@ components:
         viewCount:
           type: integer
           example: 0
+        order:
+          type: integer
+          example: 1
+          description: Order of the post within the series (0 if not in a series)
         createdAt:
           type: string
           format: date-time

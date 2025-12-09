@@ -501,6 +501,10 @@ paths:
                       viewCount:
                         type: integer
                         example: 0
+                      order:
+                        type: integer
+                        example: 1
+                        description: Order of the post within the series (0 if not in a series)
                       createdAt:
                         type: string
                         format: date-time
@@ -839,6 +843,15 @@ paths:
                   type: string
                   format: uri
                   example: 'https://res.cloudinary.com/demo/image/upload/nestjs-series.jpg'
+                postIds:
+                  type: array
+                  items:
+                    type: string
+                    format: uuid
+                  description: List of post IDs to add to the series immediately.
+                  example:
+                    - clq12345abcdef
+                    - clq67890ghijk
       responses:
         '201':
           description: Series created successfully
@@ -941,6 +954,177 @@ paths:
                 $ref: '#/paths/~1comments/post/responses/404/content/application~1json/schema'
         '500':
           description: Internal Server Error
+  '/series/{id}':
+    patch:
+      summary: Update a series
+      description: Update series information. Only the author can update.
+      tags:
+        - Series
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: The ID of the series
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                  minLength: 5
+                  maxLength: 100
+                description:
+                  type: string
+                thumbnail:
+                  type: string
+                  format: uri
+      responses:
+        '200':
+          description: Update successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/paths/~1series/post/responses/201/content/application~1json/schema'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Series not found
+        '500':
+          description: Internal Server Error
+    delete:
+      summary: Delete a series
+      description: Delete a series. Only the author can delete.
+      tags:
+        - Series
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: The ID of the series
+      responses:
+        '200':
+          description: Delete successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/paths/~1series/post/responses/201/content/application~1json/schema'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Series not found
+        '500':
+          description: Internal Server Error
+  '/series/{id}/posts':
+    patch:
+      summary: Add posts to series
+      description: Add existing posts to a series. Posts will be automatically ordered at the end of the list.
+      tags:
+        - Series
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: The ID of the series
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - postIds
+              properties:
+                postIds:
+                  type: array
+                  items:
+                    type: string
+                    format: uuid
+                  example:
+                    - clq12345abcdef
+                    - clq67890ghijk
+      responses:
+        '200':
+          description: Operation successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Series not found
+    delete:
+      summary: Remove posts from series
+      description: Remove posts from a series.
+      tags:
+        - Series
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: The ID of the series
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - postIds
+              properties:
+                postIds:
+                  type: array
+                  items:
+                    type: string
+                    format: uuid
+                  example:
+                    - clq12345abcdef
+      responses:
+        '200':
+          description: Operation successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Series not found
   /comments:
     get:
       summary: Get list of comments
