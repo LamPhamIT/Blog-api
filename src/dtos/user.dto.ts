@@ -72,3 +72,17 @@ export const UpdateProfileSchema = z.object({
 });
 
 export type UpdateProfileDTO = z.infer<typeof UpdateProfileSchema>;
+
+export interface PublicUserProfileDto {
+  id: string;
+  fullName: string | null;
+  avatarUrl: string | null;
+  createdAt: Date;
+  stats: {
+    followersCount: number;
+    followingCount: number;
+    postsCount: number;
+    seriesCount: number;
+  };
+  isFollowing: boolean;
+}

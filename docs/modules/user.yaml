@@ -1,37 +1,67 @@
 paths:
   /users/profile:
-      patch:
-        summary: Update user profile
-        description: Update current user's information (fullName, avatarUrl).
-        tags:
-          - Users
-        security:
-          - bearerAuth: []
-        requestBody:
-          required: true
+    patch:
+      summary: Update user profile
+      description: Update current user's information (fullName, avatarUrl).
+      tags:
+        - Users
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateProfileRequest"
+      responses:
+        "200":
+          description: Update successful
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/UpdateProfileRequest"
-        responses:
-          "200":
-            description: Update successful
-            content:
-              application/json:
-                schema:
-                  $ref: "#/components/schemas/ProfileResponse"
-          "400":
-            description: Validation failed
-            content:
-              application/json:
-                schema:
-                  $ref: "../common/error.yaml#/ValidationErrorResponse"
-          "401":
-            description: Unauthorized
-            content:
-              application/json:
-                schema:
-                  $ref: "../common/error.yaml#/UnauthorizedErrorResponse"
+                $ref: "#/components/schemas/ProfileResponse"
+        "400":
+          description: Validation failed
+          content:
+            application/json:
+              schema:
+                $ref: "../common/error.yaml#/ValidationErrorResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "../common/error.yaml#/UnauthorizedErrorResponse"
+
+  /users/{id}:
+    get:
+      summary: Get public user profile
+      description: Retrieve public information of a user. If authorized, returns 'isFollowing' status.
+      tags:
+        - Users
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: Target User ID
+      responses:
+        "200":
+          description: Get profile successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PublicProfileResponse"
+        "404":
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: "../common/error.yaml#/NotFoundErrorResponse"
+
   /users/{id}/follow:
     post:
       summary: Follow a user
@@ -110,17 +140,18 @@ paths:
 components:
   schemas:
     UpdateProfileRequest:
-        type: object
-        properties:
-          fullName:
-            type: string
-            minLength: 2
-            maxLength: 50
-            example: "Nguyen Van A"
-          avatarUrl:
-            type: string
-            format: uri
-            example: "https://example.com/new-avatar.jpg"
+      type: object
+      properties:
+        fullName:
+          type: string
+          minLength: 2
+          maxLength: 50
+          example: "Nguyen Van A"
+        avatarUrl:
+          type: string
+          format: uri
+          example: "https://example.com/new-avatar.jpg"
+
     ProfileResponse:
       type: object
       properties:
@@ -157,16 +188,57 @@ components:
                type: string
                format: date-time
             stats:
-              type: object
-              properties:
-                postsCount: 
-                  type: integer
-                seriesCount:
-                  type: integer
-                followersCount:
-                  type: integer
-                followingCount:
-                  type: integer
+              $ref: "#/components/schemas/UserStats"
+
+    PublicProfileResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        messageKey:
+          type: string
+          example: common.success
+        data:
+          type: object
+          properties:
+            id:
+              type: string
+              example: "clq123..."
+            fullName:
+              type: string
+              example: "Nguyen Van A"
+            avatarUrl:
+              type: string
+              example: "https://example.com/avatar.jpg"
+            createdAt:
+               type: string
+               format: date-time
+            isFollowing:
+              type: boolean
+              example: false
+            stats:
+              $ref: "#/components/schemas/UserStats"
+
+    UserListResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        messageKey:
+          type: string
+          example: common.success
+        data:
+          type: object
+          properties:
+            data:
+              type: array
+              items:
+                $ref: "#/components/schemas/PublicProfileResponse"
+            meta:
+              $ref: "#/components/schemas/PaginationMeta"
+
     FollowResponse:
       type: object
       properties:
@@ -182,3 +254,35 @@ components:
             isFollowing:
               type: boolean
               example: true
+
+    UserStats:
+      type: object
+      properties:
+        postsCount: 
+          type: integer
+          example: 10
+        seriesCount:
+          type: integer
+          example: 2
+        followersCount:
+          type: integer
+          example: 100
+        followingCount:
+          type: integer
+          example: 5
+
+    PaginationMeta:
+      type: object
+      properties:
+        page:
+          type: integer
+          example: 1
+        limit:
+          type: integer
+          example: 10
+        total:
+          type: integer
+          example: 50
+        totalPages:
+          type: integer
+          example: 5

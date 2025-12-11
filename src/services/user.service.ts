@@ -6,6 +6,7 @@ import {
   mapToUserProfile,
   UpdateProfileDTO,
   UserProfileDto,
+  PublicUserProfileDto,
 } from '../dtos/user.dto';
 import { UserRepository } from '../repositories/user.repository';
 
@@ -24,6 +25,44 @@ class UserService {
     }
 
     return mapToUserProfile(user);
+  }
+
+  async getPublicProfile(
+    targetUserId: string,
+    currentUserId?: string,
+  ): Promise<PublicUserProfileDto> {
+    const user = await userRepository.findByIdWithRoles(targetUserId);
+
+    if (!user) {
+      throw new AppError(
+        StatusCodes.NOT_FOUND,
+        UserKeys.USER_NOT_FOUND,
+        ErrorDetails.USER_NOT_FOUND,
+      );
+    }
+
+    let isFollowing = false;
+
+    if (currentUserId && currentUserId !== targetUserId) {
+      isFollowing = await userRepository.isFollowing(
+        currentUserId,
+        targetUserId,
+      );
+    }
+
+    return {
+      id: user.id,
+      fullName: user.fullName,
+      avatarUrl: user.avatarUrl,
+      createdAt: user.createdAt,
+      stats: {
+        followersCount: user._count.followers,
+        followingCount: user._count.following,
+        postsCount: user._count.Post,
+        seriesCount: user._count.Series,
+      },
+      isFollowing,
+    };
   }
 
   async follow(followerId: string, targetUserId: string) {
@@ -103,6 +142,7 @@ class UserService {
         ErrorDetails.USER_NOT_FOUND,
       );
     }
+
     return mapToUserProfile(updatedUserWithRoles);
   }
 }

@@ -31,6 +31,7 @@ export const ENDPOINTS = {
   },
   users: {
     base: `${API_PREFIX}${API_VERSION}/users`,
+    detail: '/:id',
     follow: '/:id/follow',
     profile: '/profile',
   },

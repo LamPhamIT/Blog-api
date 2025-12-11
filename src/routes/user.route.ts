@@ -1,5 +1,8 @@
 import { Router } from 'express';
-import { authenticate } from '../middleware/auth.middleware';
+import {
+  authenticate,
+  authenticateOptional,
+} from '../middleware/auth.middleware';
 import userController from '../controllers/user.controller';
 import { ENDPOINTS } from '../constants/endpoints.constant';
 import { UpdateProfileSchema } from '../dtos/user.dto';
@@ -12,6 +15,12 @@ router.patch(
   authenticate,
   validate(UpdateProfileSchema, ValidationTarget.BODY),
   userController.updateProfile,
+);
+
+router.get(
+  ENDPOINTS.users.detail,
+  authenticateOptional,
+  userController.getPublicProfile,
 );
 
 router.post(ENDPOINTS.users.follow, authenticate, userController.follow);

@@ -49,6 +49,8 @@ paths:
   # User Module
   /users/profile:
     $ref: "./modules/user.yaml#/paths/~1users~1profile"
+  /users/{id}:
+    $ref: "./modules/user.yaml#/paths/~1users~1{id}"
   /users/{id}/follow:
     $ref: "./modules/user.yaml#/paths/~1users~1{id}~1follow"
 

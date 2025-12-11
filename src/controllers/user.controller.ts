@@ -7,6 +7,25 @@ import { StatusCodes } from 'http-status-codes';
 import { UpdateProfileDTO } from '../dtos/user.dto';
 
 class UserController {
+  getPublicProfile = async (
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ) => {
+    try {
+      const { id } = req.params;
+      const currentUserId = req.user?.userId;
+
+      const result = await userService.getPublicProfile(id, currentUserId);
+
+      return res
+        .status(StatusCodes.OK)
+        .json(successResponse(UserKeys.USER_FETCH_SUCCESS, result));
+    } catch (error) {
+      next(error);
+    }
+  };
+
   follow = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const authReq = req as AuthenticatedRequest;
