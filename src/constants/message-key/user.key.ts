@@ -6,4 +6,10 @@ export const UserKeys = {
   // Error
   USER_EMAIL_EXISTS: 'user.email.exists',
   USER_NOT_FOUND: 'user.not.found',
+
+  USER_CANNOT_UNFOLLOW_SELF: 'user.cannot.unfollow.self',
+  USER_CANNOT_FOLLOW_SELF: 'user.cannot.follow.self',
+
+  USER_FOLLOW_SUCCESS: 'user.follow.success',
+  USER_UNFOLLOW_SUCCESS: 'user.unfollow.success',
 };

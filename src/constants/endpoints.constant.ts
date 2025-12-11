@@ -29,4 +29,8 @@ export const ENDPOINTS = {
     root: '/',
     id: '/:id',
   },
+  users: {
+    base: `${API_PREFIX}${API_VERSION}/users`,
+    follow: '/:id/follow',
+  },
 };

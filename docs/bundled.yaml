@@ -1408,6 +1408,92 @@ paths:
             application/json:
               schema:
                 $ref: '#/paths/~1posts/get/responses/500/content/application~1json/schema'
+  '/users/{id}/follow':
+    post:
+      summary: Follow a user
+      description: Follow another user. You cannot follow yourself.
+      tags:
+        - Users
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: The ID of the user to follow
+      responses:
+        '200':
+          description: Followed successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  messageKey:
+                    type: string
+                    example: common.success
+                  data:
+                    type: object
+                    properties:
+                      isFollowing:
+                        type: boolean
+                        example: true
+        '400':
+          description: Validation failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/paths/~1posts/get/responses/400/content/application~1json/schema'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/paths/~1posts/post/responses/401/content/application~1json/schema'
+        '404':
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/paths/~1comments/post/responses/404/content/application~1json/schema'
+    delete:
+      summary: Unfollow a user
+      description: Unfollow a user you are currently following.
+      tags:
+        - Users
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: The ID of the user to unfollow
+      responses:
+        '200':
+          description: Unfollowed successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/paths/~1users~1%7Bid%7D~1follow/post/responses/200/content/application~1json/schema'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/paths/~1posts/post/responses/401/content/application~1json/schema'
+        '404':
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/paths/~1comments/post/responses/404/content/application~1json/schema'
 components:
   securitySchemes:
     bearerAuth:

@@ -1,0 +1,93 @@
+paths:
+  /users/{id}/follow:
+    post:
+      summary: Follow a user
+      description: Follow another user. You cannot follow yourself.
+      tags:
+        - Users
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: The ID of the user to follow
+      responses:
+        "200":
+          description: Followed successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FollowResponse"
+        "400":
+          description: Validation failed
+          content:
+            application/json:
+              schema:
+                $ref: "../common/error.yaml#/ValidationErrorResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "../common/error.yaml#/UnauthorizedErrorResponse"
+        "404":
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: "../common/error.yaml#/NotFoundErrorResponse"
+    
+    delete:
+      summary: Unfollow a user
+      description: Unfollow a user you are currently following.
+      tags:
+        - Users
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: The ID of the user to unfollow
+      responses:
+        "200":
+          description: Unfollowed successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FollowResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "../common/error.yaml#/UnauthorizedErrorResponse"
+        "404":
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: "../common/error.yaml#/NotFoundErrorResponse"
+
+components:
+  schemas:
+    FollowResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        messageKey:
+          type: string
+          example: common.success
+        data:
+          type: object
+          properties:
+            isFollowing:
+              type: boolean
+              example: true

@@ -26,5 +26,9 @@
   "comment.create.success": "Comment created successfully",
   "comment.fetch.success": "Comment(s) fetched successfully",
   "comment.update.success": "Comment updated successfully",
-  "comment.delete.success": "Comment deleted successfully"
+  "comment.delete.success": "Comment deleted successfully",
+  "user.cannot.unfollow.self": "You cannot unfollow yourself",
+  "user.cannot.follow.self": "You cannot follow yourself",
+  "user.follow.success": "User followed successfully",
+  "user.unfollow.success": "User unfollowed successfully"
 }

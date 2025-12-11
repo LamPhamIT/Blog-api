@@ -45,6 +45,10 @@ paths:
     $ref: "./modules/comment.yaml#/paths/~1comments"
   /comments/{id}:
     $ref: "./modules/comment.yaml#/paths/~1comments~1{id}"
+  
+  # User Module
+  /users/{id}/follow:
+    $ref: "./modules/user.yaml#/paths/~1users~1{id}~1follow"
 
 components:
   securitySchemes:
