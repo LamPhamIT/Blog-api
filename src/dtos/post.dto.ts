@@ -1,6 +1,13 @@
 import { PostContentType } from '@prisma/client';
 import z from 'zod';
 
+export const PostSortOption = {
+  LATEST: 'latest',
+  OLDEST: 'oldest',
+  POPULAR: 'popular',
+  TRENDING: 'trending',
+} as const;
+
 export const CreatePostSchema = z.object({
   title: z
     .string({ message: 'Title is required' })
@@ -26,13 +33,22 @@ export const CreatePostSchema = z.object({
 
 export type CreatePostDTO = z.infer<typeof CreatePostSchema>;
 
+export const UpdatePostSchema = CreatePostSchema.partial().extend({
+  seriesId: z.number().nullable().optional(),
+  order: z.number().int().min(0).optional(),
+});
+
+export type UpdatePostDTO = z.infer<typeof UpdatePostSchema>;
+
 export const GetPostsQuerySchema = z.object({
   page: z.coerce.number().min(1).default(1),
   limit: z.coerce.number().min(1).max(100).default(10),
   search: z.string().optional(),
   seriesId: z.coerce.number().optional(),
+  authorId: z.string().optional(),
   tagSlug: z.string().optional(),
   isDraft: z.coerce.boolean().optional(),
+  sort: z.enum(PostSortOption).default(PostSortOption.LATEST),
 });
 
 export type GetPostsQueryDTO = z.infer<typeof GetPostsQuerySchema>;

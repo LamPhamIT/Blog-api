@@ -2,7 +2,7 @@ paths:
   /posts:
     get:
       summary: Get list of posts
-      description: Retrieve a paginated list of posts with filtering options (search, series, tags).
+      description: Retrieve a paginated list of posts with filtering options (search, series, tags, author) and sorting (popular, trending).
       tags:
         - Posts
       parameters:
@@ -28,6 +28,26 @@ paths:
           schema:
             type: integer
           description: Filter by Series ID
+        
+        - in: query
+          name: authorId
+          schema:
+            type: string
+          description: Filter by Author ID (to see posts of a specific user)
+        
+        - in: query
+          name: sort
+          schema:
+            type: string
+            enum: [latest, oldest, popular, trending]
+            default: latest
+          description: |
+            Sort options:
+            - latest: Newest first
+            - oldest: Oldest first
+            - popular: Most viewed
+            - trending: Most upvoted
+
         - in: query
           name: tagSlug
           schema:

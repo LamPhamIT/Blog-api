@@ -1,5 +1,9 @@
 import { prisma } from '../prisma/client';
-import { CreatePostDTO, GetPostsQueryDTO } from '../dtos/post.dto';
+import {
+  CreatePostDTO,
+  GetPostsQueryDTO,
+  PostSortOption,
+} from '../dtos/post.dto';
 import { PostContentType, Prisma } from '@prisma/client';
 import slugify from 'slugify';
 
@@ -153,7 +157,8 @@ export class PostRepository {
     query: GetPostsQueryDTO,
     currentUserId?: string,
   ): Promise<{ posts: PostItem[]; total: number }> {
-    const { page, limit, search, seriesId, tagSlug, isDraft } = query;
+    const { page, limit, search, seriesId, tagSlug, isDraft, authorId, sort } =
+      query;
     const skip = (page - 1) * limit;
 
     const where: Prisma.PostWhereInput = {
@@ -162,6 +167,7 @@ export class PostRepository {
         title: { contains: search, mode: 'insensitive' },
       }),
       ...(seriesId && { seriesId: seriesId }),
+      ...(authorId && { authorId: authorId }),
       ...(tagSlug && {
         tags: {
           some: { slug: tagSlug },
@@ -169,11 +175,39 @@ export class PostRepository {
       }),
     };
 
+    let orderBy:
+      | Prisma.PostOrderByWithRelationInput
+      | Prisma.PostOrderByWithRelationInput[] = {
+      createdAt: 'desc',
+    };
+
+    switch (sort) {
+      case PostSortOption.OLDEST:
+        orderBy = { createdAt: 'asc' };
+        break;
+      case PostSortOption.POPULAR:
+        orderBy = [{ viewCount: 'desc' }, { createdAt: 'desc' }];
+        break;
+      case PostSortOption.TRENDING:
+        orderBy = [{ upvotes: { _count: 'desc' } }, { createdAt: 'desc' }];
+        break;
+      case PostSortOption.LATEST:
+      default:
+        orderBy = { createdAt: 'desc' };
+        break;
+    }
+
+    if (seriesId) {
+      orderBy = Array.isArray(orderBy)
+        ? [{ order: 'asc' }, ...orderBy]
+        : [{ order: 'asc' }, orderBy];
+    }
+
     const posts = await prisma.post.findMany({
       where,
       skip,
       take: limit,
-      orderBy: { createdAt: 'desc' },
+      orderBy: orderBy,
       select: this.getPostSelect(currentUserId),
     });
 
