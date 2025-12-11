@@ -5,6 +5,7 @@ import {
   User,
   UserRole,
 } from '@prisma/client';
+import z from 'zod';
 
 export interface UserProfileDto {
   id: string;
@@ -60,3 +61,14 @@ export const mapToUserProfile = (user: UserWithRelations): UserProfileDto => {
       : undefined,
   };
 };
+
+export const UpdateProfileSchema = z.object({
+  fullName: z
+    .string()
+    .min(2, 'Full name must be at least 2 characters')
+    .max(50, 'Full name must not exceed 50 characters')
+    .optional(),
+  avatarUrl: z.url('Avatar must be a valid URL').optional(),
+});
+
+export type UpdateProfileDTO = z.infer<typeof UpdateProfileSchema>;

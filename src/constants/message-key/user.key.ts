@@ -12,4 +12,6 @@ export const UserKeys = {
 
   USER_FOLLOW_SUCCESS: 'user.follow.success',
   USER_UNFOLLOW_SUCCESS: 'user.unfollow.success',
+
+  USER_PROFILE_UPDATE_SUCCESS: 'user.profile.update.success',
 };

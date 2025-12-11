@@ -30,5 +30,6 @@
   "user.cannot.unfollow.self": "You cannot unfollow yourself",
   "user.cannot.follow.self": "You cannot follow yourself",
   "user.follow.success": "User followed successfully",
-  "user.unfollow.success": "User unfollowed successfully"
+  "user.unfollow.success": "User unfollowed successfully",
+  "user.profile.update.success": "User profile updated successfully"
 }

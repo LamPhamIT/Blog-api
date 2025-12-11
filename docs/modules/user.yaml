@@ -1,4 +1,37 @@
 paths:
+  /users/profile:
+      patch:
+        summary: Update user profile
+        description: Update current user's information (fullName, avatarUrl).
+        tags:
+          - Users
+        security:
+          - bearerAuth: []
+        requestBody:
+          required: true
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UpdateProfileRequest"
+        responses:
+          "200":
+            description: Update successful
+            content:
+              application/json:
+                schema:
+                  $ref: "#/components/schemas/ProfileResponse"
+          "400":
+            description: Validation failed
+            content:
+              application/json:
+                schema:
+                  $ref: "../common/error.yaml#/ValidationErrorResponse"
+          "401":
+            description: Unauthorized
+            content:
+              application/json:
+                schema:
+                  $ref: "../common/error.yaml#/UnauthorizedErrorResponse"
   /users/{id}/follow:
     post:
       summary: Follow a user
@@ -76,6 +109,64 @@ paths:
 
 components:
   schemas:
+    UpdateProfileRequest:
+        type: object
+        properties:
+          fullName:
+            type: string
+            minLength: 2
+            maxLength: 50
+            example: "Nguyen Van A"
+          avatarUrl:
+            type: string
+            format: uri
+            example: "https://example.com/new-avatar.jpg"
+    ProfileResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        messageKey:
+          type: string
+          example: common.success
+        data:
+          type: object
+          properties:
+            id:
+              type: string
+              example: "clq123..."
+            email:
+              type: string
+              example: "user@example.com"
+            fullName:
+              type: string
+              example: "Nguyen Van A"
+            avatarUrl:
+              type: string
+              example: "https://example.com/avatar.jpg"
+            isActive:
+              type: boolean
+              example: true
+            roles:
+              type: array
+              items:
+                type: string
+              example: ["User"]
+            createdAt:
+               type: string
+               format: date-time
+            stats:
+              type: object
+              properties:
+                postsCount: 
+                  type: integer
+                seriesCount:
+                  type: integer
+                followersCount:
+                  type: integer
+                followingCount:
+                  type: integer
     FollowResponse:
       type: object
       properties:

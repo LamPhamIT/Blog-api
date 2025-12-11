@@ -1,5 +1,6 @@
 import { Prisma, User, UserRole, UserFollow } from '@prisma/client';
 import { prisma } from '../prisma/client';
+import { UpdateProfileDTO } from '../dtos/user.dto';
 
 const userWithRolesAndPermissions = Prisma.validator<Prisma.UserDefaultArgs>()({
   include: {
@@ -139,5 +140,15 @@ export class UserRepository {
       },
     });
     return count > 0;
+  }
+
+  async update(id: string, data: UpdateProfileDTO): Promise<User> {
+    return await prisma.user.update({
+      where: { id },
+      data: {
+        fullName: data.fullName,
+        avatarUrl: data.avatarUrl,
+      },
+    });
   }
 }
