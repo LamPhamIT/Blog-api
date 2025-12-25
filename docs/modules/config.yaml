@@ -1,0 +1,41 @@
+paths:
+  /config/gemini:
+    get:
+      summary: Get Gemini API Key
+      description: Retrieve the Gemini API Key for frontend usage. Requires authentication to prevent public abuse.
+      tags:
+        - Config
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Get key successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GeminiKeyResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "../common/error.yaml#/UnauthorizedErrorResponse"
+
+components:
+  schemas:
+    GeminiKeyResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        messageKey:
+          type: string
+          example: common.success
+        data:
+          type: object
+          properties:
+            apiKey:
+              type: string
+              description: The Google Gemini API Key
+              example: "AIzaSyDxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"

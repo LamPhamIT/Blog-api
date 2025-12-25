@@ -35,4 +35,8 @@ export const ENDPOINTS = {
     follow: '/:id/follow',
     profile: '/profile',
   },
+  config: {
+    base: `${API_PREFIX}${API_VERSION}/config`,
+    geminiKey: '/gemini',
+  }
 };

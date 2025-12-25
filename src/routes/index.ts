@@ -6,6 +6,7 @@ import uploadRoutes from './upload.route';
 import seriesRoutes from './series.route';
 import commentRoutes from './comment.route';
 import userRoutes from './user.route';
+import configRoutes from './config.route';
 
 const router = Router();
 
@@ -15,5 +16,6 @@ router.use(ENDPOINTS.upload.base, uploadRoutes);
 router.use(ENDPOINTS.series.base, seriesRoutes);
 router.use(ENDPOINTS.comment.base, commentRoutes);
 router.use(ENDPOINTS.users.base, userRoutes);
+router.use(ENDPOINTS.config.base, configRoutes);
 
 export default router;

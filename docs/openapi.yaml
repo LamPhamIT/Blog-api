@@ -54,6 +54,10 @@ paths:
   /users/{id}/follow:
     $ref: "./modules/user.yaml#/paths/~1users~1{id}~1follow"
 
+  # Config Module
+  /config/gemini:
+    $ref: "./modules/config.yaml#/paths/~1config~1gemini"
+
 components:
   securitySchemes:
     bearerAuth:
